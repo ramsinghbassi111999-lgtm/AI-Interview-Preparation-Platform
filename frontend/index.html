@@ -1,108 +1,1751 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#071226"><title>AI Interview Preparation Platform</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>Interview Practice</title>
 <style>
-:root{color-scheme:dark;--bg:#061126;--panel:#0b1a33;--line:rgba(135,172,231,.2);--text:#f3f7ff;--muted:#9baeca;--blue:#2388ff;--cyan:#34d7ff;--green:#46dfb0;--yellow:#f5c94e;font-family:Inter,"Segoe UI",Arial,sans-serif}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(ellipse at 52% -25%,rgba(21,103,220,.22),transparent 48%),var(--bg)}button,select{font:inherit;color:inherit}.shell{max-width:1540px;margin:auto;padding:30px 32px}
-.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.brand{display:flex;align-items:center;gap:11px;font-weight:700}.mark{display:grid;place-items:center;width:40px;height:40px;border:1px solid #2689ff;border-radius:12px;color:var(--cyan);background:#102745;box-shadow:0 0 22px #168bff33}.mark svg{width:22px}.sub{color:var(--muted);font-size:11px;font-weight:400;margin-top:3px}.local{border:1px solid var(--line);border-radius:99px;padding:9px 13px;color:#c7d8ef;font-size:11px}.local:before{content:"";display:inline-block;width:7px;height:7px;margin-right:8px;border-radius:50%;background:var(--green)}
-.hero{text-align:center;margin-bottom:22px}.eyebrow{color:#55b9ff;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}h1{margin:8px 0 6px;font-size:clamp(28px,3vw,42px);letter-spacing:-.04em}h1 span{color:#48a9ff}.hero p{margin:0;color:#a9bad4;font-size:14px}
-.steps{display:flex;align-items:center;justify-content:center;margin:22px auto 25px;max-width:1000px}.step{display:flex;align-items:center;gap:9px;white-space:nowrap;color:#91a5c2;font-size:12px}.stepicon{width:40px;height:40px;display:grid;place-items:center;border:1px solid #254d7e;border-radius:50%;color:#609ee7;background:#0a1b35}.stepicon svg{width:20px}.step.active{color:#f1f7ff}.step.active .stepicon,.step.done .stepicon{border-color:#168cff;color:#42caff;box-shadow:0 0 20px #218fff33}.line{height:1px;width:clamp(25px,7vw,90px);margin:0 12px;background:#20568c}
-.grid{display:grid;grid-template-columns:1fr 1.12fr 1.03fr 1.13fr;gap:13px}.card{min-width:0;padding:19px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(155deg,#0c1d37,#07152a);box-shadow:0 14px 34px #0002}.head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}h2{margin:0;font-size:16px}h3{margin:0;font-size:12px}.hint{margin:6px 0 13px;color:var(--muted);font-size:11px;line-height:1.55}.pill{border:1px solid var(--line);border-radius:99px;padding:6px 9px;color:#b8c9e0;font-size:10px;white-space:nowrap}
-.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:13px 0;padding:4px;border:1px solid #779cd122;border-radius:9px;background:#07162b}.mode{border:0;border-radius:6px;padding:8px 2px;background:none;color:#9bacc7;font-size:10px;cursor:pointer}.mode.sel{background:#173a68;color:white}
-label{display:block;margin:10px 0 6px;color:#b4c4da;font-size:11px;font-weight:600}select{width:100%;padding:10px;border:1px solid #7ca2da38;border-radius:9px;background:#091a32;font-size:12px}.roles{display:grid;gap:6px;margin-top:8px}.role{display:flex;justify-content:space-between;padding:9px 10px;border:1px solid #7ca2da2c;border-radius:8px;color:#c6d4e8;background:#0a1a31;text-align:left;font-size:11px;cursor:pointer}.role.sel{border-color:#1e9cff;background:#12345a;color:white}.check{color:transparent}.role.sel .check{color:#48caff}
-.primary{width:100%;display:flex;justify-content:center;align-items:center;gap:9px;margin-top:12px;padding:11px;border:1px solid #399bff;border-radius:9px;background:linear-gradient(110deg,#126ce2,#168cf5);color:white;font-size:11px;font-weight:700;cursor:pointer}.primary:disabled{opacity:.45;cursor:not-allowed}.status{margin-top:9px;color:#9eb2cd;font-size:10px}.status:before{content:"●";color:var(--green);margin-right:7px}
-.qbox{min-height:113px;display:flex;gap:10px;padding:13px;margin-top:13px;border:1px solid #739cd633;border-radius:12px;background:#102746}.bot{flex:0 0 36px;height:36px;display:grid;place-items:center;border:1px solid #239aff;border-radius:50%;color:#48caff}.bot svg{width:21px}.qmeta{margin-bottom:5px;color:#78a6dc;font-size:9px}.qtext{color:#e1ebf8;font-size:12px;line-height:1.6}
-.recrow{display:flex;justify-content:space-between;padding:9px 11px;margin:11px 0 7px;border:1px solid #7098d226;border-radius:9px;background:#040f1f66;color:#bdcce0;font-size:10px}.wave{height:72px;display:flex;align-items:center;justify-content:center;gap:3px;overflow:hidden;padding:8px;border:1px solid #6b97d21c;border-radius:9px;background:#040f1f55}.wave i{width:3px;height:var(--h);border-radius:4px;background:linear-gradient(#48dfff,#1677f4);opacity:.8}.wave.live i{animation:pulse .55s ease-in-out infinite alternate;animation-delay:var(--d)}@keyframes pulse{to{transform:scaleY(.35);opacity:.45}}
-.micwrap{display:grid;justify-items:center;gap:7px;margin:13px}.mic{width:60px;height:60px;display:grid;place-items:center;border:1px solid #238cff;border-radius:50%;color:white;background:radial-gradient(circle at 40% 30%,#1a67c3,#0a1b35 70%);box-shadow:0 0 0 7px #1f83ff12,0 0 25px #178bff4d;cursor:pointer}.mic svg{width:22px}.mic.live{border-color:#ff6478;color:#ffb5c0;box-shadow:0 0 24px #ff465044}.caption{color:#92a9c9;font-size:10px}.player{display:none;width:100%;height:34px;margin:7px 0}
-.visual{height:176px;display:grid;place-items:center;position:relative;overflow:hidden}.orb{width:118px;height:118px;display:grid;place-items:center;border:1px solid #27a2ffcc;border-radius:50%;box-shadow:0 0 0 14px #238fff0b,0 0 0 30px #238fff08,inset 0 0 22px #238fff20,0 0 34px #238fff33;position:relative}.orb:before,.orb:after{content:"";position:absolute;width:190px;height:45px;border:1px solid #25a3ff99;border-left-color:transparent;border-right-color:transparent;border-radius:50%;transform:rotate(15deg)}.orb:after{transform:rotate(-15deg);opacity:.5}.orb svg{z-index:1;width:32px;color:#45caff}.visual.busy .orb{animation:glow 1.8s ease-in-out infinite alternate}@keyframes glow{to{box-shadow:0 0 0 20px #238fff10,0 0 0 40px #238fff09,inset 0 0 28px #238fff33,0 0 45px #238fff66}}
-.metrics{display:grid;gap:11px}.metric{display:grid;grid-template-columns:23px 1fr 1fr 48px;align-items:center;gap:7px;color:#d5e0f1;font-size:10px}.ico{width:22px;height:22px;display:grid;place-items:center;border-radius:6px;background:#112947;color:#83c5ff}.ico svg{width:14px}.bar{height:6px;border-radius:9px;background:#172c49;overflow:hidden}.bar i{display:block;width:0;height:100%;background:linear-gradient(90deg,#168bff,#42d5ff)}.bar.g i{background:linear-gradient(90deg,#13b986,#54e6b5)}.bar.y i{background:linear-gradient(90deg,#e7ae2f,#ffdb61)}.val{text-align:right;color:#b7c8df;white-space:nowrap}
-.note{margin-top:12px;padding:9px;border:1px solid #97acce24;border-radius:9px;background:#0a192f;color:#9dafc8;font-size:9px;line-height:1.5}.note strong{display:block;color:#d9e7f8;font-size:10px}
-.summary{display:grid;grid-template-columns:90px 1fr;align-items:center;gap:11px;padding:8px 0 12px}.ring{width:85px;height:85px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(#1b91ff,#1561bb 210deg,#142c4a 210deg);position:relative}.ring:before{content:"";position:absolute;inset:6px;border-radius:50%;background:#0a1a32}.ring div{z-index:1;text-align:center}.ring strong{display:block;font-size:22px}.ring small{font-size:9px;color:#8fa5c3}.sumtext{color:#c5d5eb;font-size:10px;line-height:1.5}
-.fb{margin-top:8px;padding:10px;border:1px solid #42d6b033;border-radius:9px;background:#185f531c}.fb.suggest{border-color:#ebc14233;background:#69541221}.fbtitle{margin-bottom:6px;color:#55e2b8;font-size:10px;font-weight:700}.suggest .fbtitle{color:#f6cf5b}.fblist{list-style:none;margin:0;padding:0;display:grid;gap:5px}.fblist li{color:#c9d6e9;font-size:9px;line-height:1.4}.fblist li:before{content:"✓";margin-right:6px;color:var(--green)}.suggest .fblist li:before{content:"›";color:#f5cf57}.transcript{display:none;max-height:90px;overflow:auto;margin-top:9px;padding:9px;border:1px solid #7ea3d926;border-radius:8px;background:#07172d;color:#d0deef;font-size:10px;line-height:1.5;white-space:pre-wrap}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:14px;border:1px solid var(--line);border-radius:15px;background:#0a1a32}.stat{display:flex;align-items:center;gap:11px;padding:16px;position:relative}.stat+.stat:before{content:"";position:absolute;left:0;top:23%;bottom:23%;width:1px;background:#1a4b7b}.staticon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:1px solid #2e7fda30;border-radius:50%;color:#54aaff;background:#12447d33}.staticon svg{width:21px}.sl{color:#a9bad2;font-size:9px}.sv{margin-top:4px;font-size:19px;font-weight:700}.sn{margin-top:3px;color:#6fe1b4;font-size:9px}.footer{display:flex;justify-content:space-between;gap:10px;margin:15px 2px;color:#637894;font-size:9px}[hidden]{display:none!important}
-@media(max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,1fr)}.stat:nth-child(3):before{display:none}}
-@media(max-width:620px){.shell{padding:18px 13px}.local{display:none}.hero p{font-size:12px}.steps{justify-content:space-between;margin:20px 0}.step{flex-direction:column;gap:5px;font-size:8px;text-align:center;white-space:normal;flex:1}.stepicon{width:34px;height:34px}.line{flex:0 0 12px;width:auto;margin:0 2px;align-self:flex-start;margin-top:16px}.grid{grid-template-columns:1fr;gap:10px}.card{padding:16px}.stats{grid-template-columns:repeat(2,1fr)}.stat{padding:12px 9px;gap:8px}.staticon{width:34px;height:34px;flex-basis:34px}.sv{font-size:16px}.stat:nth-child(odd):before{display:none}.footer{flex-direction:column;text-align:center}}
+/* ─────────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────────── */
+:root {
+  --bg:        #000;
+  --bg-raised: #0a0a0a;
+  --bg-card:   #111;
+  --bg-inset:  #161616;
+  --bg-hover:  #1a1a1a;
+  --separator: rgba(255,255,255,.08);
+  --separator2:rgba(255,255,255,.13);
+  --label-1:   #fff;
+  --label-2:   rgba(255,255,255,.60);
+  --label-3:   rgba(255,255,255,.35);
+  --label-4:   rgba(255,255,255,.20);
+  --accent:    #2997ff;
+  --accent-bg: rgba(41,151,255,.12);
+  --green:     #32d74b;
+  --green-bg:  rgba(50,215,75,.10);
+  --amber:     #ff9f0a;
+  --red:       #ff453a;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius:    14px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+               "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--label-1);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar { width: 0; }
+[hidden] { display: none !important; }
+button  { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+select, input, textarea { font: inherit; color: inherit; outline: none; }
+
+/* ─────────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────────── */
+.app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+/* ─────────────────────────────────────────────
+   NAV BAR — translucent, blurred like macOS
+───────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 24px;
+  margin: 0 -24px;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: .5px solid var(--separator);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--label-1);
+  text-decoration: none;
+}
+
+.nav-logo {
+  width: 28px;
+  height: 28px;
+  background: var(--accent);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+}
+
+.nav-logo svg { width: 15px; height: 15px; color: #fff; }
+
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+
+.nav-btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--label-2);
+  transition: all .15s;
+}
+.nav-btn:hover { background: var(--bg-hover); color: var(--label-1); }
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--label-3);
+  border: .5px solid var(--separator2);
+}
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+.hero {
+  padding: 72px 0 56px;
+  text-align: center;
+}
+.hero-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.hero h1 {
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 700;
+  letter-spacing: -.045em;
+  line-height: 1.07;
+  color: var(--label-1);
+  margin-bottom: 16px;
+}
+.hero h1 strong { font-weight: 700; }
+.hero p {
+  font-size: 17px;
+  color: var(--label-2);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 32px;
+  font-weight: 400;
+}
+
+/* ─────────────────────────────────────────────
+   PROGRESS STEPS — pill style
+───────────────────────────────────────────── */
+.steps {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  border-radius: 99px;
+  padding: 5px 6px;
+  gap: 2px;
+  margin-bottom: 56px;
+}
+.stp {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--label-3);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.stp-n {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  background: transparent;
+  border: 1px solid var(--label-4);
+  transition: all .2s;
+}
+.stp.active { background: var(--bg-hover); color: var(--label-1); }
+.stp.active .stp-n { background: var(--accent); border-color: var(--accent); color: #fff; }
+.stp.done   { color: var(--label-2); }
+.stp.done .stp-n {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+  font-size: 11px;
+}
+.stp-sep { width: 20px; height: .5px; background: var(--separator2); flex-shrink: 0; }
+
+/* ─────────────────────────────────────────────
+   GRID
+───────────────────────────────────────────── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* ─────────────────────────────────────────────
+   CARD
+───────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--label-3);
+  margin-bottom: 4px;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  color: var(--label-1);
+  margin-bottom: 20px;
+}
+.card-sub {
+  font-size: 13px;
+  color: var(--label-2);
+  line-height: 1.55;
+  margin-bottom: 20px;
+}
+.card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.card-head-text .card-title { margin-bottom: 0; }
+
+/* ─────────────────────────────────────────────
+   TAG / BADGE
+───────────────────────────────────────────── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-inset);
+  color: var(--label-3);
+  border: .5px solid var(--separator2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tag.blue   { background: var(--accent-bg); color: var(--accent); border-color: rgba(41,151,255,.2); }
+.tag.green  { background: var(--green-bg);  color: var(--green);  border-color: rgba(50,215,75,.2); }
+.tag.amber  { background: rgba(255,159,10,.1); color: var(--amber); border-color: rgba(255,159,10,.2); }
+
+/* ─────────────────────────────────────────────
+   SEGMENT CONTROL — exact Apple style
+───────────────────────────────────────────── */
+.seg {
+  display: flex;
+  background: var(--bg-inset);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  margin-bottom: 20px;
+}
+.seg-btn {
+  flex: 1;
+  padding: 7px 4px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--label-3);
+  transition: all .18s;
+  letter-spacing: -.01em;
+}
+.seg-btn.sel {
+  background: var(--bg-hover);
+  color: var(--label-1);
+  box-shadow: 0 1px 3px rgba(0,0,0,.5), 0 0 0 .5px rgba(255,255,255,.08);
+}
+
+/* ─────────────────────────────────────────────
+   FORM
+───────────────────────────────────────────── */
+.field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--label-2);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.select-wrap { position: relative; margin-bottom: 12px; }
+.select-wrap::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--label-3);
+  pointer-events: none;
+}
+.select-wrap select {
+  width: 100%;
+  padding: 10px 32px 10px 12px;
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--label-1);
+  appearance: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.select-wrap select:focus { border-color: var(--accent); }
+
+/* ─────────────────────────────────────────────
+   ROLE LIST
+───────────────────────────────────────────── */
+.role-list { display: grid; gap: 5px; margin-bottom: 20px; }
+.role-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  border: .5px solid transparent;
+  font-size: 13px;
+  color: var(--label-2);
+  transition: all .15s;
+  cursor: pointer;
+}
+.role-item:hover { background: var(--bg-hover); color: var(--label-1); }
+.role-item.sel {
+  background: var(--accent-bg);
+  border-color: rgba(41,151,255,.25);
+  color: var(--accent);
+}
+.role-item.sel .role-check {
+  opacity: 1;
+}
+.role-label { display: flex; align-items: center; gap: 10px; }
+.role-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--bg-hover);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.role-item.sel .role-icon { background: var(--accent); }
+.role-check {
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.role-check svg { width: 16px; height: 16px; color: var(--accent); }
+
+/* ─────────────────────────────────────────────
+   BUTTONS
+───────────────────────────────────────────── */
+.btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  transition: all .15s;
+}
+.btn-fill {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-fill:hover  { filter: brightness(1.1); }
+.btn-fill:active { filter: brightness(.95); transform: scale(.99); }
+.btn-fill:disabled {
+  background: var(--bg-inset);
+  color: var(--label-4);
+  cursor: not-allowed;
+  filter: none;
+  transform: none;
+}
+.btn-plain {
+  background: var(--bg-inset);
+  color: var(--label-2);
+  border: .5px solid var(--separator2);
+  font-size: 13px;
+  height: 38px;
+  margin-top: 8px;
+}
+.btn-plain:hover { color: var(--label-1); background: var(--bg-hover); }
+
+/* ─────────────────────────────────────────────
+   STATUS LINE
+───────────────────────────────────────────── */
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--label-3);
+}
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────
+   QUESTION BOX
+───────────────────────────────────────────── */
+.q-box {
+  background: var(--bg-inset);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.q-meta {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--label-3);
+  margin-bottom: 8px;
+}
+.q-text {
+  font-size: 15px;
+  color: var(--label-1);
+  line-height: 1.55;
+  font-weight: 400;
+}
+
+/* ─────────────────────────────────────────────
+   WAVEFORM
+───────────────────────────────────────────── */
+.wave {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5px;
+  background: var(--bg-inset);
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  overflow: hidden;
+  padding: 8px;
+}
+.wave-bar {
+  width: 2.5px;
+  height: var(--h, 10px);
+  border-radius: 2px;
+  background: var(--label-4);
+  transition: height .08s;
+}
+.wave.live .wave-bar {
+  background: var(--accent);
+  opacity: .8;
+  animation: wv .6s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0ms);
+}
+@keyframes wv { to { transform: scaleY(.15); opacity: .3; } }
+
+/* ─────────────────────────────────────────────
+   TIMER ROW
+───────────────────────────────────────────── */
+.timer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--label-3);
+}
+.timer-val {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--label-2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rec-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+}
+.rec-indicator.live { animation: blink .9s ease-in-out infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .2; } }
+
+/* ─────────────────────────────────────────────
+   MIC BUTTON — large, centered
+───────────────────────────────────────────── */
+.mic-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 16px;
+}
+.mic-btn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  transition: all .2s;
+}
+.mic-btn:hover { background: var(--bg-hover); transform: scale(1.04); }
+.mic-btn.live {
+  background: rgba(255,69,58,.12);
+  border-color: rgba(255,69,58,.3);
+  animation: mic-pulse 2s ease-in-out infinite;
+}
+@keyframes mic-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,69,58,.15); }
+  50%      { box-shadow: 0 0 0 10px rgba(255,69,58,.0); }
+}
+.mic-btn svg { width: 26px; height: 26px; color: var(--label-2); transition: color .2s; }
+.mic-btn:hover svg, .mic-btn.live svg { color: var(--label-1); }
+.mic-label { font-size: 12px; color: var(--label-3); }
+
+audio {
+  width: 100%;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  accent-color: var(--accent);
+}
+
+/* ─────────────────────────────────────────────
+   TEXTAREA
+───────────────────────────────────────────── */
+.answer-area {
+  width: 100%;
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-sm);
+  color: var(--label-1);
+  padding: 11px 13px;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: none;
+  min-height: 76px;
+  transition: border-color .15s;
+}
+.answer-area:focus { border-color: var(--accent); }
+.answer-area::placeholder { color: var(--label-4); }
+
+/* ─────────────────────────────────────────────
+   VIDEO
+───────────────────────────────────────────── */
+#cam {
+  display: none;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  max-height: 180px;
+  object-fit: cover;
+  background: #000;
+}
+.cam-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 8px; }
+.cam-btn {
+  padding: 8px 4px;
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--label-2);
+  transition: all .15s;
+}
+.cam-btn:hover { color: var(--label-1); background: var(--bg-hover); }
+.cam-btn:disabled { opacity: .3; cursor: not-allowed; }
+#live {
+  font-size: 11px;
+  color: var(--label-3);
+  font-style: italic;
+  min-height: 1.4em;
+  margin-bottom: 8px;
+}
+
+/* ─────────────────────────────────────────────
+   ANALYSIS — ORB
+───────────────────────────────────────────── */
+.orb-stage {
+  display: grid;
+  place-items: center;
+  height: 150px;
+  margin-bottom: 8px;
+}
+.orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: .5px solid var(--separator2);
+  background: var(--bg-inset);
+  position: relative;
+}
+.orb::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  border: .5px solid var(--separator);
+}
+.orb svg { width: 28px; height: 28px; color: var(--label-3); z-index: 1; }
+.orb-stage.busy .orb {
+  border-color: var(--accent);
+  animation: orb-glow 1.8s ease-in-out infinite alternate;
+}
+@keyframes orb-glow {
+  to { box-shadow: 0 0 0 16px rgba(41,151,255,.05), 0 0 32px rgba(41,151,255,.12); }
+}
+
+/* ─────────────────────────────────────────────
+   METRICS
+───────────────────────────────────────────── */
+.metric-list { display: grid; gap: 14px; }
+.metric {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+}
+.metric-name {
+  font-size: 13px;
+  color: var(--label-2);
+  font-weight: 400;
+  grid-column: 1;
+  grid-row: 1;
+}
+.metric-val {
+  font-size: 13px;
+  color: var(--label-1);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  grid-column: 2;
+  grid-row: 1;
+  text-align: right;
+  white-space: nowrap;
+}
+.bar-track {
+  grid-column: 1 / -1;
+  height: 3px;
+  background: var(--bg-inset);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  width: 0;
+  background: var(--accent);
+  transition: width .7s cubic-bezier(.25,.46,.45,.94);
+}
+.bar-fill.g { background: var(--green); }
+.bar-fill.a { background: var(--amber); }
+
+.divider { height: .5px; background: var(--separator); margin: 16px 0; }
+
+.info-row {
+  font-size: 12px;
+  color: var(--label-3);
+  line-height: 1.55;
+}
+.info-row + .info-row { margin-top: 10px; }
+.info-row strong { color: var(--label-2); font-weight: 500; display: block; margin-bottom: 2px; }
+
+/* ─────────────────────────────────────────────
+   SCORE RING
+───────────────────────────────────────────── */
+.score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: .5px solid var(--separator);
+  margin-bottom: 20px;
+}
+.ring {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  background: conic-gradient(var(--accent) 0deg, var(--bg-inset) 0deg);
+  position: relative;
+}
+.ring::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: var(--bg-card);
+}
+.ring-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  line-height: 1;
+}
+.ring-val  { font-size: 19px; font-weight: 700; letter-spacing: -.04em; display: block; }
+.ring-unit { font-size: 10px; color: var(--label-3); }
+.score-text {
+  font-size: 13px;
+  color: var(--label-2);
+  line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────
+   FEEDBACK SECTIONS
+───────────────────────────────────────────── */
+.fb-section { margin-bottom: 16px; }
+.fb-heading {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+  color: var(--label-2);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fb-heading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.fb-heading-dot.green { background: var(--green); }
+.fb-heading-dot.blue  { background: var(--accent); }
+.fb-heading-dot.amber { background: var(--amber); }
+
+.fb-list {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.fb-list li {
+  font-size: 13px;
+  color: var(--label-2);
+  line-height: 1.55;
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 8px;
+}
+.fb-list li::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--label-4);
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.fb-list.green li::before { background: var(--green); }
+.fb-list.blue  li::before { background: var(--accent); }
+
+.transcript-area {
+  font-size: 12px;
+  color: var(--label-2);
+  line-height: 1.65;
+  background: var(--bg-inset);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  max-height: 100px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  display: none;
+  margin-top: 12px;
+  border: .5px solid var(--separator);
+}
+
+/* ─────────────────────────────────────────────
+   STATS ROW
+───────────────────────────────────────────── */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--bg-card);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.stat {
+  padding: 24px 20px;
+  border-right: .5px solid var(--separator);
+}
+.stat:last-child { border-right: none; }
+.stat-label { font-size: 12px; color: var(--label-3); margin-bottom: 6px; }
+.stat-val   { font-size: 28px; font-weight: 700; letter-spacing: -.04em; color: var(--label-1); line-height: 1; }
+.stat-unit  { font-size: 13px; font-weight: 400; color: var(--label-3); }
+.stat-sub   { font-size: 11px; color: var(--label-3); margin-top: 4px; }
+
+/* ─────────────────────────────────────────────
+   PROGRESS SECTION
+───────────────────────────────────────────── */
+.progress-section {
+  background: var(--bg-card);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  margin-bottom: 12px;
+}
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--label-3);
+  margin-bottom: 4px;
+}
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+  color: var(--label-1);
+  margin-bottom: 20px;
+}
+.acct-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: .5px solid var(--separator);
+}
+.acct-btn {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--bg-inset);
+  color: var(--label-2);
+  border: .5px solid var(--separator2);
+  transition: all .15s;
+}
+.acct-btn:hover { color: var(--label-1); background: var(--bg-hover); }
+.acct-btn.danger { color: var(--red); }
+.acct-btn.danger:hover { background: rgba(255,69,58,.1); border-color: rgba(255,69,58,.25); }
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 24px 0;
+  border-top: .5px solid var(--separator);
+  font-size: 12px;
+  color: var(--label-4);
+}
+
+/* ─────────────────────────────────────────────
+   AUTH SHEET
+───────────────────────────────────────────── */
+#authBox {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 999;
+  padding: 0 0 0 0;
+}
+#authBox.show {
+  display: flex;
+  animation: sheet-in .3s cubic-bezier(.32,1,.23,1);
+}
+@keyframes sheet-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+#authBox::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.auth-sheet {
+  position: relative;
+  z-index: 1;
+  background: #1c1c1e;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: 8px 32px 48px;
+  width: min(480px, 100%);
+  animation: slide-up .3s cubic-bezier(.32,1,.23,1);
+}
+@keyframes slide-up {
+  from { transform: translateY(60px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.auth-handle {
+  width: 36px;
+  height: 4px;
+  background: rgba(255,255,255,.18);
+  border-radius: 2px;
+  margin: 12px auto 28px;
+}
+.auth-h { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 6px; }
+.auth-p { font-size: 14px; color: var(--label-2); margin-bottom: 28px; }
+.auth-field-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--label-3);
+  margin-bottom: 7px;
+  display: block;
+}
+.auth-input {
+  width: 100%;
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 15px;
+  color: var(--label-1);
+  margin-bottom: 16px;
+  transition: border-color .15s;
+}
+.auth-input:focus { border-color: var(--accent); }
+.auth-input::placeholder { color: var(--label-4); }
+.auth-err {
+  font-size: 13px;
+  color: var(--red);
+  min-height: 1.4em;
+  margin-bottom: 16px;
+}
+.auth-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.auth-btn {
+  height: 50px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  transition: all .15s;
+}
+.auth-btn-fill { background: var(--accent); color: #fff; }
+.auth-btn-fill:hover  { filter: brightness(1.1); }
+.auth-btn-plain {
+  background: var(--bg-inset);
+  border: .5px solid var(--separator2);
+  color: var(--label-2);
+}
+.auth-btn-plain:hover { color: var(--label-1); background: var(--bg-hover); }
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .grid  { grid-template-columns: repeat(2,1fr); }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .stat:nth-child(2) { border-right: none; }
+  .stat:nth-child(3) { border-top: .5px solid var(--separator); }
+  .stat:nth-child(4) { border-top: .5px solid var(--separator); border-right: none; }
+}
+@media (max-width: 680px) {
+  .app { padding: 0 16px 60px; }
+  .nav { padding: 0 16px; margin: 0 -16px; }
+  .hero { padding: 48px 0 40px; }
+  .hero h1 { font-size: 32px; }
+  .hero p  { font-size: 15px; }
+  .steps { display: none; }
+  .grid  { grid-template-columns: 1fr; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .live-badge { display: none; }
+  .progress-section { padding: 20px; }
+}
 </style>
 </head>
-<body><div class="shell">
-<header class="top"><div class="brand"><div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 8h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m-7 5h6"/></svg></div><div>AI Interview Prep<div class="sub">AI Communication Coach</div></div></div><span class="local">Runs locally on your device</span></header>
-<section class="hero"><div class="eyebrow">Your practice space</div><h1>AI Interview, <span>Smarter You</span></h1><p>Choose a role, answer by voice or text, get a score and track your weak topics.</p></section>
-<nav class="steps" aria-label="Practice steps">
-<div class="step active" id="step1"><i class="stepicon">▣</i><span>1&nbsp; Choose practice</span></div><i class="line"></i><div class="step" id="step2"><i class="stepicon">☷</i><span>2&nbsp; Answer prompt</span></div><i class="line"></i><div class="step" id="step3"><i class="stepicon">▥</i><span>3&nbsp; Voice analysis</span></div><i class="line"></i><div class="step" id="step4"><i class="stepicon">✧</i><span>4&nbsp; Feedback</span></div></nav>
-<main class="grid">
-<section class="card">
-<div class="head"><h2>Choose your practice</h2></div><p class="hint">Set a goal for this session and get a prompt to answer out loud.</p>
-<div class="modes"><button class="mode sel" data-mode="interview">Interview</button><button class="mode" data-mode="general">Speaking</button><button class="mode" data-mode="presentation">Present</button></div>
-<label for="role">Practice role</label><select id="role"><option>Product Manager</option><option>Software Engineer</option><option>Data Analyst</option><option>UX Designer</option><option>Marketing Manager</option></select>
-<div class="roles"><button class="role sel" data-role="Product Manager">✚ &nbsp;Product Manager <span class="check">✓</span></button><button class="role" data-role="Software Engineer">⌘ &nbsp;Software Engineer <span class="check">✓</span></button><button class="role" data-role="Data Analyst">▥ &nbsp;Data Analyst <span class="check">✓</span></button><button class="role" data-role="UX Designer">◇ &nbsp;UX Designer <span class="check">✓</span></button><button class="role" data-role="Marketing Manager">◉ &nbsp;Marketing Manager <span class="check">✓</span></button></div>
-<button class="primary" id="start">Start practice &nbsp; →</button><div class="status" id="practiceStatus">Ready when you are</div></section>
-<section class="card">
-<div class="head"><h2 id="answerTitle">AI interview</h2><span class="pill" id="sessionBadge">Ready</span></div><p class="hint">Read the prompt, collect your thoughts, then record your answer.</p>
-<div class="qbox"><div class="bot">✦</div><div><div class="qmeta" id="qmeta">QUESTION 1 · PRODUCT MANAGER</div><div class="qtext" id="question">Tell me about a challenging product decision you made. How did you evaluate the options and what happened?</div></div></div>
-<div class="recrow"><span>Your answer</span><span>🔴 &nbsp;<span id="timer">00:00</span></span></div><div class="wave" id="wave"></div>
-<div class="micwrap"><button class="mic" id="mic" aria-label="Start recording">🎙</button><span class="caption" id="caption">Tap to start recording</span></div>
-<audio class="player" id="player" controls></audio>
-<textarea id="typed" rows="3" placeholder="Or type your answer here (no microphone needed)" aria-label="Typed answer" style="width:100%;margin:10px 0;padding:10px;background:transparent;color:inherit;border:1px solid #2b4268;border-radius:10px;font:inherit"></textarea><button class="primary" id="evalTyped">Evaluate typed answer</button>
-<button class="primary" id="analyze" disabled>Analyze my answer &nbsp; →</button><div class="status" id="status" role="status" aria-live="polite">Your recording stays on this device.</div>
-</section>
-<section class="card">
-<div class="head"><h2>Voice analysis</h2><span class="pill" id="analysisBadge">Awaiting answer</span></div><p class="hint">Estimated delivery measurements from your recording.</p>
-<div class="visual" id="visual"><div class="orb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h3l2-6 4 12 3-9 2 3h4"/></svg></div></div>
-<div class="metrics">
-<div class="metric"><span class="ico">◷</span><span>Speaking pace</span><span class="bar"><i id="paceBar"></i></span><span class="val" id="pace">—</span></div>
-<div class="metric"><span class="ico">⌁</span><span>Estimated pauses</span><span class="bar g"><i id="pauseBar"></i></span><span class="val" id="pauses">—</span></div>
-<div class="metric"><span class="ico">≋</span><span>Filler words</span><span class="bar y"><i id="fillerBar"></i></span><span class="val" id="fillers">—</span></div></div>
-<div class="note"><strong>More voice signals coming next</strong>Pitch variation and vocal energy are not measured by the current analysis yet.</div>
-<div class="note"><strong>Emotion model · planned</strong>RAVDESS fine-tuning in Google Colab (Approach B) is still to be completed. No emotion estimate is shown yet.</div>
-</section>
-<section class="card">
-<div class="head"><h2>Personalized feedback</h2><span class="pill" id="feedbackBadge">Practice tip</span></div><p class="hint">Suggestions based on the transcript and basic audio estimates.</p>
-<div class="summary"><div class="ring"><div><strong id="wordCount">—</strong><small>words</small></div></div><div class="sumtext" id="summary">Complete an answer to see your transcript and practice suggestions here.</div></div>
-<div class="fb"><div class="fbtitle">✧ &nbsp;What went well</div><ul class="fblist" id="strengths"><li>Finish a practice answer to see your results.</li></ul></div>
-<div class="fb suggest"><div class="fbtitle">✧ &nbsp;Try next</div><ul class="fblist" id="suggestions"><li>Use a clear example and explain the result.</li></ul></div>
-<div class="fb" id="evalBox" style="display:none"><div class="fbtitle">✧ &nbsp;Answer score: <span id="evalScore">—</span></div><p id="evalMissing"></p><ul class="fblist" id="evalTips"></ul></div>
-<div class="transcript" id="transcript"></div>
-<button class="primary" id="next">Next practice prompt &nbsp; →</button>
-</section></main>
-<section class="stats" aria-label="Your practice summary">
-<div class="stat"><div class="staticon">↗</div><div><div class="sl">Practice sessions</div><div class="sv" id="count">0</div><div class="sn">Saved on this device</div></div></div>
-<div class="stat"><div class="staticon" style="color:#49ddcf">◎</div><div><div class="sl">Average speaking pace</div><div class="sv"><span id="average">—</span><small style="font-size:10px;color:#9baeca"> WPM</small></div><div class="sn">Across analyzed sessions</div></div></div>
-<div class="stat"><div class="staticon" style="color:#f5cd4b">♜</div><div><div class="sl">Latest answer length</div><div class="sv" id="duration">—</div><div class="sn">Seconds recorded</div></div></div>
-<div class="stat"><div class="staticon" style="color:#ff9e59">♨</div><div><div class="sl">Practice streak</div><div class="sv" id="streak">0 days</div><div class="sn">Consecutive practice days</div></div></div>
-</section>
-<section class="card" id="topicProgress"><div class="head"><h2>Topic progress</h2></div><p class="hint">Average score per topic. Topics under 60 need more practice.</p><div class="metrics" id="topicBars"></div></section>
-<footer class="footer"><span>AI Interview Preparation Platform · Local practice prototype</span><span>Estimates support practice; they do not assess confidence or interview success.</span></footer>
+<body>
+
+<div class="app">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a class="nav-brand" href="#">
+      <div class="nav-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </div>
+      Interview Practice
+    </a>
+    <div class="nav-actions">
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        Local
+      </div>
+      <button class="nav-btn" id="topAuthBtn" onclick="showAuth()">Sign in</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">AI-Powered</div>
+    <h1>Practice interviews.<br>Get better, faster.</h1>
+    <p>Answer by voice or text, receive instant analysis and feedback, track your improvement over time.</p>
+
+    <!-- Steps -->
+    <div class="steps" role="navigation" aria-label="Practice steps">
+      <div class="stp active" id="step1">
+        <span class="stp-n">1</span>
+        <span>Setup</span>
+      </div>
+      <div class="stp-sep"></div>
+      <div class="stp" id="step2">
+        <span class="stp-n">2</span>
+        <span>Answer</span>
+      </div>
+      <div class="stp-sep"></div>
+      <div class="stp" id="step3">
+        <span class="stp-n">3</span>
+        <span>Analyze</span>
+      </div>
+      <div class="stp-sep"></div>
+      <div class="stp" id="step4">
+        <span class="stp-n">✓</span>
+        <span>Feedback</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN GRID -->
+  <main class="grid">
+
+    <!-- ── 1: SETUP ── -->
+    <section class="card">
+      <div class="card-label">Step 1</div>
+      <div class="card-title">Choose your practice</div>
+
+      <div class="seg" role="tablist">
+        <button class="seg-btn sel" data-mode="interview" role="tab" aria-selected="true">Interview</button>
+        <button class="seg-btn" data-mode="general" role="tab" aria-selected="false">Speaking</button>
+        <button class="seg-btn" data-mode="presentation" role="tab" aria-selected="false">Present</button>
+      </div>
+
+      <span class="field-label">Role</span>
+      <div class="select-wrap">
+        <select id="role" aria-label="Practice role">
+          <option>Product Manager</option>
+          <option>Software Engineer</option>
+          <option>Data Analyst</option>
+          <option>UX Designer</option>
+          <option>Marketing Manager</option>
+        </select>
+      </div>
+
+      <div class="role-list" id="roleList">
+        <button class="role-item sel" data-role="Product Manager">
+          <div class="role-label">
+            <div class="role-icon">PM</div>
+            Product Manager
+          </div>
+          <span class="role-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </span>
+        </button>
+        <button class="role-item" data-role="Software Engineer">
+          <div class="role-label">
+            <div class="role-icon">SE</div>
+            Software Engineer
+          </div>
+          <span class="role-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+        </button>
+        <button class="role-item" data-role="Data Analyst">
+          <div class="role-label">
+            <div class="role-icon">DA</div>
+            Data Analyst
+          </div>
+          <span class="role-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+        </button>
+        <button class="role-item" data-role="UX Designer">
+          <div class="role-label">
+            <div class="role-icon">UX</div>
+            UX Designer
+          </div>
+          <span class="role-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+        </button>
+        <button class="role-item" data-role="Marketing Manager">
+          <div class="role-label">
+            <div class="role-icon">MM</div>
+            Marketing Manager
+          </div>
+          <span class="role-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </span>
+        </button>
+      </div>
+
+      <button class="btn btn-fill" id="start">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Start session
+      </button>
+
+      <div class="status-line">
+        <span class="status-dot"></span>
+        <span id="practiceStatus">Ready when you are</span>
+      </div>
+    </section>
+
+    <!-- ── 2: ANSWER ── -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-label">Step 2</div>
+          <div class="card-title" id="answerTitle">AI Interview</div>
+        </div>
+        <span class="tag" id="sessionBadge">Ready</span>
+      </div>
+
+      <div class="q-box">
+        <div class="q-meta" id="qmeta">Question 1 · Product Manager</div>
+        <div class="q-text" id="question">Tell me about a challenging product decision you made. How did you evaluate the options and what happened?</div>
+      </div>
+
+      <div class="timer-row">
+        <span>Your answer</span>
+        <span class="timer-val">
+          <span class="rec-indicator" id="recDot"></span>
+          <span id="timer">00:00</span>
+        </span>
+      </div>
+
+      <div class="wave" id="wave"></div>
+
+      <div class="mic-wrap">
+        <button class="mic-btn" id="mic" aria-label="Start recording">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </button>
+        <span class="mic-label" id="caption">Tap to start recording</span>
+      </div>
+
+      <audio id="player" controls style="display:none"></audio>
+
+      <!-- Camera -->
+      <video id="cam" playsinline></video>
+      <div class="cam-row">
+        <button class="cam-btn" id="camOn">Camera on</button>
+        <button class="cam-btn" id="vidRec" disabled>Record video</button>
+        <button class="cam-btn" id="camOff" disabled>Camera off</button>
+      </div>
+      <div id="live"></div>
+
+      <div class="divider"></div>
+
+      <span class="field-label">Or type your answer</span>
+      <textarea class="answer-area" id="typed" rows="3" placeholder="Type here — no microphone needed" aria-label="Typed answer"></textarea>
+
+      <button class="btn btn-plain" id="evalTyped">Evaluate typed answer</button>
+      <button class="btn btn-fill" id="analyze" disabled style="margin-top:8px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Analyze answer
+      </button>
+
+      <div class="status-line">
+        <span class="status-dot"></span>
+        <span id="status" role="status" aria-live="polite">Recording stays on this device.</span>
+      </div>
+    </section>
+
+    <!-- ── 3: ANALYSIS ── -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-label">Step 3</div>
+          <div class="card-title">Voice Analysis</div>
+        </div>
+        <span class="tag" id="analysisBadge">Awaiting</span>
+      </div>
+
+      <div class="orb-stage" id="visual">
+        <div class="orb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="metric-list">
+        <div class="metric">
+          <span class="metric-name">Speaking pace</span>
+          <span class="metric-val" id="pace">—</span>
+          <div class="bar-track"><div class="bar-fill" id="paceBar"></div></div>
+        </div>
+        <div class="metric">
+          <span class="metric-name">Estimated pauses</span>
+          <span class="metric-val" id="pauses">—</span>
+          <div class="bar-track"><div class="bar-fill g" id="pauseBar"></div></div>
+        </div>
+        <div class="metric">
+          <span class="metric-name">Filler words</span>
+          <span class="metric-val" id="fillers">—</span>
+          <div class="bar-track"><div class="bar-fill a" id="fillerBar"></div></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="info-row">
+        <strong>Pitch & energy</strong>
+        Pitch variation and vocal energy signals are coming in a future update.
+      </div>
+      <div class="info-row" style="margin-top:10px">
+        <strong>Emotion model</strong>
+        RAVDESS fine-tuning is in progress. Emotion estimates will appear here when ready.
+      </div>
+    </section>
+
+    <!-- ── 4: FEEDBACK ── -->
+    <section class="card">
+      <div class="card-head">
+        <div class="card-head-text">
+          <div class="card-label">Step 4</div>
+          <div class="card-title">Feedback</div>
+        </div>
+        <span class="tag" id="feedbackBadge">Practice tip</span>
+      </div>
+
+      <div class="score-wrap">
+        <div class="ring" id="scoreRing">
+          <div class="ring-inner">
+            <span class="ring-val" id="wordCount">—</span>
+            <span class="ring-unit" id="ringUnit">words</span>
+          </div>
+        </div>
+        <div class="score-text" id="summary">
+          Complete a practice answer to see your score and personalized suggestions.
+        </div>
+      </div>
+
+      <div class="fb-section">
+        <div class="fb-heading">
+          <span class="fb-heading-dot green"></span>
+          What went well
+        </div>
+        <ul class="fb-list green" id="strengths">
+          <li>Finish a practice answer to see your results.</li>
+        </ul>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="fb-section">
+        <div class="fb-heading">
+          <span class="fb-heading-dot blue"></span>
+          Try next time
+        </div>
+        <ul class="fb-list blue" id="suggestions">
+          <li>Use a clear example and explain the result.</li>
+        </ul>
+      </div>
+
+      <div id="evalBox" style="display:none">
+        <div class="divider"></div>
+        <div class="fb-section">
+          <div class="fb-heading">
+            <span class="fb-heading-dot amber"></span>
+            Score: <span id="evalScore">—</span>
+          </div>
+          <p id="evalMissing" style="font-size:12px;color:var(--label-3);margin-bottom:8px;line-height:1.5"></p>
+          <ul class="fb-list" id="evalTips"></ul>
+        </div>
+      </div>
+
+      <div class="transcript-area" id="transcript"></div>
+
+      <button class="btn btn-plain" id="next" style="margin-top:16px">Next prompt →</button>
+    </section>
+
+  </main>
+
+  <!-- STATS -->
+  <section class="stats" aria-label="Your practice summary">
+    <div class="stat">
+      <div class="stat-label">Sessions</div>
+      <div class="stat-val" id="count">0</div>
+      <div class="stat-sub">On this device</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Avg. pace</div>
+      <div class="stat-val"><span id="average">—</span> <span class="stat-unit">WPM</span></div>
+      <div class="stat-sub">Across sessions</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Last answer</div>
+      <div class="stat-val"><span id="duration">—</span> <span class="stat-unit">s</span></div>
+      <div class="stat-sub">Duration</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Streak</div>
+      <div class="stat-val" id="streak">0</div>
+      <div class="stat-sub">Days in a row</div>
+    </div>
+  </section>
+
+  <!-- PROGRESS -->
+  <section class="progress-section" id="topicProgress">
+    <div class="section-label">Progress</div>
+    <div class="section-title">Topics</div>
+    <div class="metric-list" id="topicBars"></div>
+    <div class="acct-row" id="acctSection" hidden>
+      <button class="acct-btn" id="outBtn">Sign out</button>
+      <button class="acct-btn danger" id="delBtn">Delete account</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>Interview Practice · AI analysis platform</span>
+    <span>Estimates support practice only and do not predict interview outcomes.</span>
+  </footer>
+
+</div><!-- /app -->
+
+<!-- AUTH SHEET -->
+<div id="authBox" role="dialog" aria-modal="true" aria-label="Sign in">
+  <div class="auth-sheet">
+    <div class="auth-handle"></div>
+    <form id="authForm">
+      <h2 class="auth-h">Welcome back</h2>
+      <p class="auth-p" id="authMsg">Sign in to save progress and track your improvement over time.</p>
+
+      <label class="auth-field-label" for="au">Username</label>
+      <input class="auth-input" id="au" type="text" autocomplete="username" required minlength="3" placeholder="your_username">
+
+      <label class="auth-field-label" for="ap">Password</label>
+      <input class="auth-input" id="ap" type="password" autocomplete="current-password" required minlength="6" placeholder="6 or more characters">
+
+      <div class="auth-err" id="authErr" role="alert"></div>
+
+      <div class="auth-actions">
+        <button class="auth-btn auth-btn-fill" type="submit" id="doLogin">Sign in</button>
+        <button class="auth-btn auth-btn-plain" type="button" id="doReg">Create account</button>
+      </div>
+    </form>
+  </div>
 </div>
+
+<!-- CORE LOGIC -->
 <script>
-const API=(location.protocol.startsWith("http")&&location.port!=="5500"?location.origin:"http://127.0.0.1:8000")+"/analyze-audio",KEY="speakwise.practiceSessions.v1";
-const prompts={
-interview:["Tell me about a challenging product decision you made. How did you evaluate the options and what happened?","Describe a time you disagreed with a teammate. How did you handle it?","What is a project you are proud of, and what was your specific contribution?","Tell me about a time you used feedback to improve your work."],
-general:["Talk about a skill you have learned recently and how you practised it.","Describe a place or experience that changed the way you think.","Explain an idea you find interesting as if speaking to a new teammate."],
-presentation:["Give a one-minute presentation: how could a small team make its meetings more effective?","Present an idea for a simple app that would make everyday life easier.","Explain why clear communication matters when people work as a team."]};
-const $=id=>document.getElementById(id);let mode="interview",idx=0,role="Product Manager",blob=null,url=null,ctx=null,stream=null,source=null,processor=null,parts=[],recording=false,startTime=0,ticker;
-for(let i=0;i<42;i++){const b=document.createElement("i");b.style.setProperty("--h",(10+Math.round((Math.sin(i*1.7)+1)*18+i%4*3))+"px");b.style.setProperty("--d",i%9*35+"ms");$("wave").appendChild(b)}
-function setStatus(s){$("status").textContent=s;$("practiceStatus").textContent=s}
-function step(n){for(let i=1;i<=4;i++){$("step"+i).classList.toggle("active",i===n);$("step"+i).classList.toggle("done",i<n)}}
-function prompt(){const label=mode==="interview"?"QUESTION":mode==="general"?"SPEAKING PROMPT":"PRESENTATION TOPIC";$("qmeta").textContent=label+" "+(idx+1)+" · "+(mode==="interview"?role.toUpperCase():mode.toUpperCase());$("question").textContent=prompts[mode][idx%prompts[mode].length];$("answerTitle").textContent=mode==="interview"?"AI interview":mode==="general"?"Speaking practice":"Presentation practice"}
-document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>{mode=b.dataset.mode;idx=0;document.querySelectorAll(".mode").forEach(x=>x.classList.toggle("sel",x===b));prompt();setStatus("Practice mode selected")});
-function chooseRole(r){role=r;$("role").value=r;document.querySelectorAll(".role").forEach(b=>b.classList.toggle("sel",b.dataset.role===r));prompt()}
-document.querySelectorAll(".role").forEach(b=>b.onclick=()=>chooseRole(b.dataset.role));$("role").onchange=e=>chooseRole(e.target.value);
-$("start").onclick=()=>{prompt();step(2);$("sessionBadge").textContent="In progress";setStatus("Prompt ready. Record your answer when you are ready.");$("mic").focus()};
-$("next").onclick=()=>{idx++;prompt();step(2);$("transcript").style.display="none";$("analysisBadge").textContent="Awaiting answer";$("sessionBadge").textContent="In progress";setStatus("New prompt ready. Record your answer when you are ready.")};
-function wav(samples,sr){const buf=new ArrayBuffer(44+samples.length*2),v=new DataView(buf),w=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};w(0,"RIFF");v.setUint32(4,36+samples.length*2,true);w(8,"WAVE");w(12,"fmt ");v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sr,true);v.setUint32(28,sr*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);w(36,"data");v.setUint32(40,samples.length*2,true);let o=44;for(let x of samples){x=Math.max(-1,Math.min(1,x));v.setInt16(o,x<0?x*32768:x*32767,true);o+=2}return new Blob([buf],{type:"audio/wav"})}
-function dispose(){if(processor)processor.disconnect();if(source)source.disconnect();if(stream)stream.getTracks().forEach(t=>t.stop());if(ctx&&ctx.state!=="closed")ctx.close();processor=null;source=null;stream=null;ctx=null;clearInterval(ticker)}
-async function startRec(){try{blob=null;$("analyze").disabled=true;if(url){URL.revokeObjectURL(url);url=null}$("player").style.display="none";stream=await navigator.mediaDevices.getUserMedia({audio:true});ctx=new(window.AudioContext||window.webkitAudioContext)();source=ctx.createMediaStreamSource(stream);processor=ctx.createScriptProcessor(4096,1,1);parts=[];processor.onaudioprocess=e=>{if(!recording)return;parts.push(new Float32Array(e.inputBuffer.getChannelData(0)));e.outputBuffer.getChannelData(0).fill(0)};source.connect(processor);processor.connect(ctx.destination);recording=true;startTime=Date.now();$("wave").classList.add("live");$("mic").classList.add("live");$("caption").textContent="Tap to stop recording";$("sessionBadge").textContent="Recording";ticker=setInterval(()=>{let s=Math.floor((Date.now()-startTime)/1000);$("timer").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},250);setStatus("Recording. Tap the microphone when you have finished.");}catch(e){dispose();recording=false;setStatus("Microphone unavailable: "+e.message+". Check browser permission and try again.")}}
-function stopRec(){if(!recording)return;recording=false;$("wave").classList.remove("live");$("mic").classList.remove("live");let sr=ctx.sampleRate,total=parts.reduce((a,b)=>a+b.length,0),samples=new Float32Array(total),o=0;for(const p of parts){samples.set(p,o);o+=p.length}blob=wav(samples,sr);dispose();if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);$("player").src=url;$("player").style.display="block";$("caption").textContent="Recording saved on this device";$("analyze").disabled=false;$("sessionBadge").textContent="Answer ready";setStatus("Recording ready. Replay it or analyze your answer.")}
-$("mic").onclick=()=>recording?stopRec():startRec();
-function list(id,items){const ul=$(id);ul.replaceChildren();items.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.appendChild(li)})}
-function readSessions(){try{return JSON.parse(localStorage.getItem(KEY)||"[]")}catch{return[]}}
-function saveSession(item){const all=readSessions();all.unshift(item);localStorage.setItem(KEY,JSON.stringify(all.slice(0,100)));stats()}
-function stats(){const a=readSessions();$("count").textContent=a.length;const rates=a.map(x=>Number(x.rate)).filter(x=>x>0);$("average").textContent=rates.length?Math.round(rates.reduce((x,y)=>x+y,0)/rates.length):"—";$("duration").textContent=a.length?Math.round(a[0].duration):"—";const days=new Set(a.map(x=>x.day));let n=0,d=new Date();d.setHours(0,0,0,0);while(days.has(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1)}$("streak").textContent=n+(n===1?" day":" days")}
-$("analyze").onclick=async()=>{if(!blob){setStatus("Record an answer first.");return}const form=new FormData();form.append("file",blob,"answer.wav");$("analyze").disabled=true;$("visual").classList.add("busy");$("analysisBadge").textContent="Analyzing";$("sessionBadge").textContent="Analyzing";step(3);setStatus("Transcribing and analyzing your answer. Please wait…");try{const res=await fetch(API,{method:"POST",body:form}),data=await res.json();if(!res.ok)throw Error(data.detail||"The backend could not analyze this recording.");showResult(data);setStatus("Analysis complete. Your results are ready.")}catch(e){setStatus("Analysis failed: "+e.message+" Check that the local backend is running at 127.0.0.1:8000.");$("analysisBadge").textContent="Could not analyze";$("sessionBadge").textContent="Ready";step(2)}finally{$("analyze").disabled=false;$("visual").classList.remove("busy")}};
-function showResult(data){const a=data.analysis||{},s=data.speech_content||{},t=data.transcription||{},rate=Number(s.estimated_speaking_rate_wpm)||0,pauses=Number(a.estimated_pause_count)||0,fill=Number(s.estimated_filler_count)||0,words=Number(s.transcript_word_count)||0,duration=Number(a.duration_seconds)||0;$("pace").textContent=rate?Math.round(rate)+" WPM":"—";$("pauses").textContent=pauses+" pauses";$("fillers").textContent=fill;$("paceBar").style.width=Math.min(100,Math.max(4,rate/2.2))+"%";$("pauseBar").style.width=Math.min(100,pauses*12)+"%";$("fillerBar").style.width=Math.min(100,fill*16)+"%";$("wordCount").textContent=words;$("analysisBadge").textContent="Complete";$("sessionBadge").textContent="Complete";$("feedbackBadge").textContent="Based on your answer";$("summary").textContent=words?"About "+words+" words over "+duration+" seconds. Review the transcript and suggestions below.":"No words were recognized. Try recording closer to your microphone.";const good=[];if(words>=5)good.push("You completed a spoken response with "+words+" recognized words.");if(fill===0&&words>=5)good.push("No tracked filler words appeared in the transcript.");if(rate>=100&&rate<=160)good.push("Your estimated pace is in a commonly comfortable practice range.");list("strengths",good.length?good:["Your recording was analyzed; review what the transcript recognized."]);list("suggestions",(s.feedback||["Try using a specific example and explaining its result."]).slice(0,3));$("transcript").textContent=t.text||"No speech was recognized.";$("transcript").style.display="block";saveSession({day:new Date().toISOString().slice(0,10),rate,duration,fill,mode,role});step(4)}
-stats();prompt();
+const API = (location.protocol.startsWith("http") && location.port !== "5500"
+  ? location.origin : "http://127.0.0.1:8000") + "/analyze-audio";
+const KEY = "interviewai.v3";
+
+const $ = id => document.getElementById(id);
+
+let mode = "interview", idx = 0, role = "Product Manager";
+let blob = null, url = null;
+let ctx = null, stream = null, source = null, processor = null;
+let parts = [], recording = false, startTime = 0, ticker;
+
+/* Wave bars */
+for (let i = 0; i < 44; i++) {
+  const b = document.createElement("div");
+  b.className = "wave-bar";
+  b.style.setProperty("--h", (8 + Math.round((Math.sin(i * 1.7) + 1) * 16 + i % 3 * 4)) + "px");
+  b.style.setProperty("--d", (i % 9 * 35) + "ms");
+  $("wave").appendChild(b);
+}
+
+/* Helpers */
+function setStatus(s) {
+  $("status").textContent = s;
+  $("practiceStatus").textContent = s;
+}
+
+function goStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    $("step" + i).classList.toggle("active", i === n);
+    $("step" + i).classList.toggle("done", i < n);
+  }
+}
+
+/* Prompts */
+const PROMPTS = {
+  interview: [
+    "Tell me about a challenging product decision you made. How did you evaluate the options and what happened?",
+    "Describe a time you disagreed with a teammate. How did you handle it?",
+    "What is a project you are proud of, and what was your specific contribution?",
+    "Tell me about a time you used feedback to improve your work."
+  ],
+  general: [
+    "Talk about a skill you have learned recently and how you practised it.",
+    "Describe a place or experience that changed the way you think.",
+    "Explain an idea you find interesting as if speaking to a new teammate."
+  ],
+  presentation: [
+    "Give a one-minute presentation: how could a small team make its meetings more effective?",
+    "Present an idea for a simple app that would make everyday life easier.",
+    "Explain why clear communication matters when people work as a team."
+  ]
+};
+
+function renderPrompt() {
+  const lbl = { interview: "Question", general: "Prompt", presentation: "Topic" };
+  $("qmeta").textContent = lbl[mode] + " " + (idx + 1) + " · " + (mode === "interview" ? role : mode.charAt(0).toUpperCase() + mode.slice(1));
+  $("question").textContent = PROMPTS[mode][idx % PROMPTS[mode].length];
+  $("answerTitle").textContent = mode === "interview" ? "AI Interview" : mode === "general" ? "Speaking Practice" : "Presentation";
+}
+
+/* Mode segment */
+document.querySelectorAll(".seg-btn").forEach(b => {
+  b.onclick = () => {
+    mode = b.dataset.mode;
+    idx  = 0;
+    document.querySelectorAll(".seg-btn").forEach(x => {
+      x.classList.toggle("sel", x === b);
+      x.setAttribute("aria-selected", x === b ? "true" : "false");
+    });
+    renderPrompt();
+    setStatus("Mode changed to " + mode);
+  };
+});
+
+/* Role select */
+function chooseRole(r) {
+  role = r;
+  $("role").value = r;
+  document.querySelectorAll(".role-item").forEach(b => b.classList.toggle("sel", b.dataset.role === r));
+  renderPrompt();
+}
+document.querySelectorAll(".role-item").forEach(b => b.onclick = () => chooseRole(b.dataset.role));
+$("role").onchange = e => chooseRole(e.target.value);
+
+/* Start */
+$("start").onclick = () => {
+  renderPrompt();
+  goStep(2);
+  $("sessionBadge").textContent = "In progress";
+  $("sessionBadge").className = "tag";
+  setStatus("Prompt ready. Record your answer.");
+  $("mic").focus();
+};
+
+/* Next */
+$("next").onclick = () => {
+  idx++;
+  renderPrompt();
+  goStep(2);
+  $("transcript").style.display = "none";
+  $("analysisBadge").textContent = "Awaiting";
+  $("analysisBadge").className = "tag";
+  $("sessionBadge").textContent = "In progress";
+  setStatus("New prompt ready.");
+};
+
+/* WAV encoder */
+function mkWav(samples, sr) {
+  const buf = new ArrayBuffer(44 + samples.length * 2);
+  const v   = new DataView(buf);
+  const w   = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  w(0,"RIFF"); v.setUint32(4, 36 + samples.length * 2, true);
+  w(8,"WAVE"); w(12,"fmt ");
+  v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true);
+  v.setUint16(32,2,true);  v.setUint16(34,16,true);
+  w(36,"data"); v.setUint32(40,samples.length*2,true);
+  let o = 44;
+  for (let x of samples) {
+    x = Math.max(-1, Math.min(1, x));
+    v.setInt16(o, x < 0 ? x * 32768 : x * 32767, true);
+    o += 2;
+  }
+  return new Blob([buf], { type: "audio/wav" });
+}
+
+/* Recorder */
+function disposeAudio() {
+  if (processor) processor.disconnect();
+  if (source)    source.disconnect();
+  if (stream)    stream.getTracks().forEach(t => t.stop());
+  if (ctx && ctx.state !== "closed") ctx.close();
+  processor = source = stream = ctx = null;
+  clearInterval(ticker);
+}
+
+async function startRec() {
+  try {
+    blob = null;
+    $("analyze").disabled = true;
+    if (url) { URL.revokeObjectURL(url); url = null; }
+    $("player").style.display = "none";
+    stream    = await navigator.mediaDevices.getUserMedia({ audio: true });
+    ctx       = new (window.AudioContext || window.webkitAudioContext)();
+    source    = ctx.createMediaStreamSource(stream);
+    processor = ctx.createScriptProcessor(4096, 1, 1);
+    parts     = [];
+    processor.onaudioprocess = e => {
+      if (!recording) return;
+      parts.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+      e.outputBuffer.getChannelData(0).fill(0);
+    };
+    source.connect(processor);
+    processor.connect(ctx.destination);
+    recording = true;
+    startTime = Date.now();
+    $("wave").classList.add("live");
+    $("mic").classList.add("live");
+    $("recDot").classList.add("live");
+    $("caption").textContent = "Tap to stop";
+    $("sessionBadge").textContent = "Recording";
+    ticker = setInterval(() => {
+      const s = Math.floor((Date.now() - startTime) / 1000);
+      $("timer").textContent = String(Math.floor(s / 60)).padStart(2,"0") + ":" + String(s % 60).padStart(2,"0");
+    }, 250);
+    setStatus("Recording… tap the mic to stop.");
+  } catch(e) {
+    disposeAudio();
+    recording = false;
+    setStatus("Mic unavailable: " + e.message);
+  }
+}
+
+function stopRec() {
+  if (!recording) return;
+  recording = false;
+  $("wave").classList.remove("live");
+  $("mic").classList.remove("live");
+  $("recDot").classList.remove("live");
+  const sr = ctx.sampleRate;
+  const total = parts.reduce((a, b) => a + b.length, 0);
+  const samples = new Float32Array(total);
+  let o = 0;
+  for (const p of parts) { samples.set(p, o); o += p.length; }
+  blob = mkWav(samples, sr);
+  disposeAudio();
+  if (url) URL.revokeObjectURL(url);
+  url = URL.createObjectURL(blob);
+  $("player").src = url;
+  $("player").style.display = "block";
+  $("caption").textContent = "Tap to record again";
+  $("analyze").disabled = false;
+  $("sessionBadge").textContent = "Ready to analyze";
+  $("sessionBadge").className = "tag green";
+  setStatus("Recording saved. Tap Analyze to continue.");
+}
+
+$("mic").onclick = () => recording ? stopRec() : startRec();
+
+/* Sessions */
+function listItems(id, items) {
+  const ul = $(id);
+  ul.replaceChildren();
+  items.forEach(t => {
+    const li = document.createElement("li");
+    li.textContent = t;
+    ul.appendChild(li);
+  });
+}
+
+function readSessions() {
+  try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }
+}
+
+function saveSession(item) {
+  const all = readSessions();
+  all.unshift(item);
+  localStorage.setItem(KEY, JSON.stringify(all.slice(0, 100)));
+  renderStats();
+}
+
+function renderStats() {
+  const a    = readSessions();
+  const rates = a.map(x => Number(x.rate)).filter(x => x > 0);
+  $("count").textContent    = a.length;
+  $("average").textContent  = rates.length ? Math.round(rates.reduce((x,y) => x + y, 0) / rates.length) : "—";
+  $("duration").textContent = a.length ? Math.round(a[0].duration) : "—";
+  const days = new Set(a.map(x => x.day));
+  let n = 0, d = new Date(); d.setHours(0,0,0,0);
+  while (days.has(d.toISOString().slice(0,10))) { n++; d.setDate(d.getDate() - 1); }
+  $("streak").textContent = n;
+}
+
+/* Analyze */
+$("analyze").onclick = async () => {
+  if (!blob) { setStatus("Record an answer first."); return; }
+  const form = new FormData();
+  form.append("file", blob, "answer.wav");
+  $("analyze").disabled = true;
+  $("visual").classList.add("busy");
+  $("analysisBadge").textContent = "Analyzing";
+  $("analysisBadge").className = "tag amber";
+  goStep(3);
+  setStatus("Transcribing and analyzing…");
+  try {
+    const res  = await window.fetch(API, { method: "POST", body: form });
+    const data = await res.json();
+    if (!res.ok) throw Error(data.detail || "Analysis failed.");
+    showResult(data);
+    setStatus("Analysis complete.");
+  } catch(e) {
+    setStatus("Failed: " + e.message + " — is the backend running at 127.0.0.1:8000?");
+    $("analysisBadge").textContent = "Error";
+    $("analysisBadge").className = "tag";
+    $("sessionBadge").textContent = "Ready";
+    goStep(2);
+  } finally {
+    $("analyze").disabled = false;
+    $("visual").classList.remove("busy");
+  }
+};
+
+/* Results */
+function setRing(score) {
+  const deg = Math.round(Math.min(100, Math.max(0, score)) / 100 * 360);
+  $("scoreRing").style.background = `conic-gradient(var(--accent) ${deg}deg, var(--bg-inset) ${deg}deg)`;
+  $("wordCount").textContent = score;
+  $("ringUnit").textContent  = "/ 100";
+}
+
+function showResult(data) {
+  const a  = data.analysis || {};
+  const s  = data.speech_content || {};
+  const t  = data.transcription || {};
+  const rate     = Number(s.estimated_speaking_rate_wpm) || 0;
+  const pauses   = Number(a.estimated_pause_count)       || 0;
+  const fill     = Number(s.estimated_filler_count)      || 0;
+  const words    = Number(s.transcript_word_count)       || 0;
+  const duration = Number(a.duration_seconds)            || 0;
+
+  $("pace").textContent   = rate ? Math.round(rate) + " WPM" : "—";
+  $("pauses").textContent = pauses + (pauses === 1 ? " pause" : " pauses");
+  $("fillers").textContent= fill;
+  $("paceBar").style.width   = Math.min(100, Math.max(4, rate / 2.2)) + "%";
+  $("pauseBar").style.width  = Math.min(100, pauses * 12) + "%";
+  $("fillerBar").style.width = Math.min(100, fill * 16)  + "%";
+
+  $("analysisBadge").textContent = "Complete";
+  $("analysisBadge").className   = "tag green";
+  $("sessionBadge").textContent  = "Complete";
+  $("sessionBadge").className    = "tag green";
+  $("feedbackBadge").textContent = "Your results";
+  $("feedbackBadge").className   = "tag blue";
+
+  $("summary").textContent = words
+    ? words + " words · " + Math.round(duration) + "s recorded"
+    : "No words recognized — try speaking closer to your microphone.";
+
+  /* Word count ring (default) */
+  if (data.evaluation) {
+    setRing(data.evaluation.score);
+  } else {
+    $("wordCount").textContent = words || "—";
+    $("ringUnit").textContent  = "words";
+  }
+
+  /* Strengths */
+  const good = [];
+  if (words >= 5)        good.push("Completed a " + words + "-word response.");
+  if (fill === 0 && words >= 5) good.push("No filler words detected.");
+  if (rate >= 100 && rate <= 160) good.push("Pace of " + Math.round(rate) + " WPM is in the ideal range.");
+  listItems("strengths", good.length ? good : ["Your answer was recorded — review the transcript below."]);
+
+  /* Suggestions */
+  listItems("suggestions", (s.feedback || ["Use a specific example and explain the result."]).slice(0, 3));
+
+  $("transcript").textContent = t.text || "No speech recognized.";
+  $("transcript").style.display = "block";
+
+  saveSession({ day: new Date().toISOString().slice(0,10), rate, duration, fill, mode, role });
+  goStep(4);
+}
+
+/* Init */
+renderStats();
+renderPrompt();
 </script>
+
+<!-- INTERVIEW.JS: auth, server questions, video, progress -->
 <script src="interview.js"></script>
-</body></html>
+
+</body>
+</html>

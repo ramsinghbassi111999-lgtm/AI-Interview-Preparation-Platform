@@ -1,136 +1,391 @@
-/* Interview-platform add-on: login, server questions, video recording, evaluation, progress. */
-const BASE = API.replace("/analyze-audio", "");
-let QS = {}, currentQ = null, TOKEN = localStorage.getItem("ai.token") || "";
+/**
+ * interview.js
+ * Extends the core page with: auth, server-side questions, video recording,
+ * typed-answer evaluation and progress tracking.
+ */
 
-/* ---------- fetch wrapper: auth header, question id, evaluation display ---------- */
-const _fetch = window.fetch;
-window.fetch = async (u, o = {}) => {
-  if (String(u).startsWith(BASE) && TOKEN) o.headers = { ...(o.headers || {}), Authorization: "Bearer " + TOKEN };
-  if (u === API && o.body instanceof FormData && currentQ) o.body.append("question_id", currentQ.id);
-  const r = await _fetch(u, o);
-  if (r.status === 401 && !String(u).includes("/auth/")) showAuth("Please log in to continue.");
-  if (u === API && r.ok) r.clone().json().then(d => d.evaluation && showEval(d.evaluation));
-  return r;
+/* ─── Base URL & state ─── */
+const BASE  = API.replace("/analyze-audio", "");
+let   QS    = {};         // questions from server, keyed by role
+let   currentQ = null;    // active question object
+let   TOKEN = localStorage.getItem("ai.token") || "";
+
+/* ─────────────────────────────────────────────
+   FETCH WRAPPER
+   • Attaches Bearer token to every API call
+   • Appends question_id to audio-analysis forms
+   • Intercepts 401s to show auth sheet
+   • Reads evaluation from audio-analysis response
+───────────────────────────────────────────── */
+const _rawFetch = window.fetch;
+window.fetch = async (url, opts = {}) => {
+  const str = String(url);
+
+  // Attach auth header for all calls to our API
+  if (str.startsWith(BASE) && TOKEN) {
+    opts.headers = { ...(opts.headers || {}), Authorization: "Bearer " + TOKEN };
+  }
+
+  // Inject question_id into audio-analysis form submissions
+  if (url === API && opts.body instanceof FormData && currentQ) {
+    opts.body.append("question_id", currentQ.id);
+  }
+
+  const res = await _rawFetch(url, opts);
+
+  // Trigger auth sheet on 401 (except from auth endpoints themselves)
+  if (res.status === 401 && !str.includes("/auth/")) {
+    showAuth("Please sign in to continue.");
+  }
+
+  // Show evaluation result if present in audio-analysis response
+  if (url === API && res.ok) {
+    res.clone().json().then(d => { if (d && d.evaluation) showEval(d.evaluation); }).catch(() => {});
+  }
+
+  return res;
 };
-const call = (path, opts) => window.fetch(BASE + path, opts);
-const post = (path, body) => call(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 
-/* ---------- questions ---------- */
-const _prompt = prompt;
-window.prompt = function () {
-  _prompt();
-  const list = QS[role];
-  if (mode === "interview" && list && list.length) {
-    currentQ = list[idx % list.length];
-    $("question").textContent = currentQ.question;
-    $("qmeta").textContent += " · " + currentQ.topic.toUpperCase() + " · " + currentQ.difficulty.toUpperCase();
-  } else currentQ = null;
+/* Shorthand helpers */
+const apiCall = (path, opts)  => window.fetch(BASE + path, opts);
+const apiPost = (path, body)  => apiCall(path, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(body)
+});
+
+/* ─────────────────────────────────────────────
+   SERVER QUESTIONS
+   Fetches questions from /questions and replaces
+   the in-page prompt text when in interview mode.
+───────────────────────────────────────────── */
+const _corePrompt = window.prompt;      // save reference used in core script
+
+/** Override renderPrompt to prefer server questions when available. */
+const _coreRenderPrompt = window.renderPrompt || function(){};
+window.renderPrompt = function () {
+  _coreRenderPrompt();                  // let core script set defaults first
+
+  if (mode === "interview") {
+    const list = QS[role];
+    if (list && list.length) {
+      currentQ = list[idx % list.length];
+      const qEl    = document.getElementById("question");
+      const metaEl = document.getElementById("qmeta");
+      if (qEl)    qEl.textContent   = currentQ.question;
+      if (metaEl) metaEl.textContent =
+        "Question " + (idx + 1) + " · " + role + " · " +
+        currentQ.topic.toUpperCase() + " · " + currentQ.difficulty.toUpperCase();
+      return;
+    }
+  }
+  currentQ = null;
 };
-_fetch(BASE + "/questions").then(r => r.json()).then(d => { QS = d; prompt(); }).catch(() => {});
 
-/* ---------- login / register ---------- */
-const css = document.createElement("style");
-css.textContent = "#authBox{position:fixed;inset:0;background:rgba(7,18,38,.96);display:none;align-items:center;justify-content:center;z-index:99}#authBox form{background:#101d36;border:1px solid #2b4268;border-radius:16px;padding:24px;width:min(360px,90vw);color:#e8f0ff}#authBox input{width:100%;margin:6px 0 12px;padding:10px;border-radius:8px;border:1px solid #2b4268;background:transparent;color:inherit;font:inherit}#authBox button{margin-right:8px}#authErr{color:#ff8a8a;min-height:1.2em}";
-document.head.appendChild(css);
-const box = document.createElement("div"); box.id = "authBox";
-box.innerHTML = '<form id="authForm"><h2>AI Interview Preparation Platform</h2><p id="authMsg">Log in or create an account to save your progress.</p><label for="au">Username</label><input id="au" autocomplete="username" required minlength="3"><label for="ap">Password (6+ characters)</label><input id="ap" type="password" autocomplete="current-password" required minlength="6"><div id="authErr" role="alert"></div><button class="primary" type="submit" id="doLogin">Log in</button><button class="primary" type="button" id="doReg">Register</button></form>';
-document.body.appendChild(box);
-function showAuth(msg) { $("authMsg").textContent = msg || $("authMsg").textContent; box.style.display = "flex"; $("au").focus(); }
-async function authenticate(path) {
-  const r = await post(path, { username: $("au").value.trim(), password: $("ap").value });
-  const d = await r.json();
-  if (!r.ok) { $("authErr").textContent = typeof d.detail === "string" ? d.detail : "Username: 3-30 letters/numbers; password: 6+ characters."; return; }
-  TOKEN = d.token; localStorage.setItem("ai.token", TOKEN); localStorage.setItem("ai.user", d.username);
-  $("authErr").textContent = ""; box.style.display = "none"; $("ap").value = ""; loadProgress();
+/* Load questions on startup */
+_rawFetch(BASE + "/questions")
+  .then(r => r.json())
+  .then(d => { QS = d; window.renderPrompt(); })
+  .catch(() => { /* backend offline — use inline prompts */ });
+
+/* ─────────────────────────────────────────────
+   AUTH SHEET
+───────────────────────────────────────────── */
+function showAuth(msg) {
+  const msgEl = document.getElementById("authMsg");
+  if (msgEl && msg) msgEl.textContent = msg;
+  const box = document.getElementById("authBox");
+  if (box) box.classList.add("show");
+  const au = document.getElementById("au");
+  if (au) au.focus();
 }
-$("authForm").onsubmit = e => { e.preventDefault(); authenticate("/auth/login"); };
-$("doReg").onclick = () => $("authForm").reportValidity() && authenticate("/auth/register");
-function signOut() { TOKEN = ""; localStorage.removeItem("ai.token"); $("topicBars").replaceChildren(); showAuth("Signed out. Log in to continue."); }
 
-/* ---------- evaluation display ---------- */
-function fill(id, items) { const ul = $(id); ul.replaceChildren(); items.forEach(t => { const li = document.createElement("li"); li.textContent = t; ul.appendChild(li); }); }
-function showEval(ev) {
-  $("evalScore").textContent = ev.score + "/100";
-  fill("evalTips", ev.tips);
-  $("evalMissing").textContent = ev.missing.length ? "Missing concepts: " + ev.missing.join(", ") : "All key concepts covered.";
-  $("evalBox").style.display = "block";
-  $("sessionBadge").textContent = "Score " + ev.score;
+function hideAuth() {
+  const box = document.getElementById("authBox");
+  if (box) box.classList.remove("show");
+}
+
+// Close auth sheet when clicking the backdrop
+document.getElementById("authBox").addEventListener("click", e => {
+  if (e.target === e.currentTarget) hideAuth();
+});
+
+async function authenticate(path) {
+  const au  = document.getElementById("au");
+  const ap  = document.getElementById("ap");
+  const err = document.getElementById("authErr");
+  if (!au || !ap || !err) return;
+
+  err.textContent = "";
+  const res  = await apiPost(path, { username: au.value.trim(), password: ap.value });
+  const data = await res.json();
+
+  if (!res.ok) {
+    err.textContent = typeof data.detail === "string"
+      ? data.detail
+      : "Username: 3–30 chars (letters/numbers); password: 6+ chars.";
+    return;
+  }
+
+  TOKEN = data.token;
+  localStorage.setItem("ai.token", TOKEN);
+  localStorage.setItem("ai.user",  data.username);
+  ap.value = "";
+  hideAuth();
+
+  /* Show account controls in progress section */
+  const acct = document.getElementById("acctSection");
+  if (acct) acct.hidden = false;
+
+  /* Update nav button */
+  const navBtn = document.getElementById("topAuthBtn");
+  if (navBtn) { navBtn.textContent = data.username; navBtn.onclick = signOut; }
+
   loadProgress();
 }
-$("evalTyped").onclick = async () => {
-  if (!currentQ) { setStatus("Typed answers need Interview mode with a question selected."); return; }
-  const answer = $("typed").value.trim();
-  if (!answer) { setStatus("Type an answer first."); return; }
-  const r = await post("/evaluate-text", { question_id: currentQ.id, answer });
-  if (r.ok) { showEval(await r.json()); step(4); setStatus("Typed answer evaluated."); } else if (r.status !== 401) setStatus("Could not evaluate the answer.");
+
+const form = document.getElementById("authForm");
+if (form) form.onsubmit = e => { e.preventDefault(); authenticate("/auth/login"); };
+
+const doReg = document.getElementById("doReg");
+if (doReg) doReg.onclick = () => {
+  const f = document.getElementById("authForm");
+  if (f && !f.reportValidity()) return;
+  authenticate("/auth/register");
 };
 
-/* ---------- video recording with live captions ---------- */
-const vb = document.createElement("div");
-vb.innerHTML = '<video id="cam" playsinline style="display:none;width:100%;margin-top:10px;border-radius:12px;background:#000"></video><div class="modes" style="margin-top:10px"><button class="mode" id="camOn">Camera on</button><button class="mode" id="vidRec" disabled>Record video</button><button class="mode" id="camOff" disabled>Camera off</button></div><div class="hint" id="live" aria-live="polite"></div>';
-$("player").after(vb);
-let cam = null, mr = null, chunks = [], rec = null;
-function startLive() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
-  rec = new SR(); rec.continuous = true; rec.interimResults = true; rec.lang = "en-US";
-  rec.onresult = e => { let t = ""; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript; $("live").textContent = "Live captions: " + t; };
-  try { rec.start(); } catch (e) { /* already started */ }
+function signOut() {
+  TOKEN = "";
+  localStorage.removeItem("ai.token");
+  localStorage.removeItem("ai.user");
+  const topicBars = document.getElementById("topicBars");
+  if (topicBars) topicBars.replaceChildren();
+  const acct = document.getElementById("acctSection");
+  if (acct) acct.hidden = true;
+  const navBtn = document.getElementById("topAuthBtn");
+  if (navBtn) { navBtn.textContent = "Sign in"; navBtn.onclick = showAuth; }
+  showAuth("Signed out. Sign in to continue.");
 }
-function stopLive() { if (rec) { try { rec.stop(); } catch (e) {} rec = null; } }
-$("camOn").onclick = async () => {
+
+/* Boot: show auth if no token */
+if (TOKEN) {
+  const acct = document.getElementById("acctSection");
+  if (acct) acct.hidden = false;
+  const navBtn = document.getElementById("topAuthBtn");
+  if (navBtn) {
+    const user = localStorage.getItem("ai.user");
+    if (user) { navBtn.textContent = user; navBtn.onclick = signOut; }
+  }
+  loadProgress();
+} else {
+  showAuth();
+}
+
+/* ─────────────────────────────────────────────
+   TYPED-ANSWER EVALUATION
+───────────────────────────────────────────── */
+function showEval(ev) {
+  const scoreEl   = document.getElementById("evalScore");
+  const tipsEl    = document.getElementById("evalTips");
+  const missingEl = document.getElementById("evalMissing");
+  const box       = document.getElementById("evalBox");
+  const badge     = document.getElementById("sessionBadge");
+
+  if (scoreEl) scoreEl.textContent = ev.score + "/100";
+  if (missingEl) missingEl.textContent = ev.missing && ev.missing.length
+    ? "Missing concepts: " + ev.missing.join(", ") + "."
+    : "All key concepts covered.";
+
+  if (tipsEl) {
+    tipsEl.replaceChildren();
+    (ev.tips || []).forEach(t => {
+      const li = document.createElement("li");
+      li.textContent = t;
+      tipsEl.appendChild(li);
+    });
+  }
+
+  if (box)   box.style.display = "block";
+  if (badge) { badge.textContent = "Score " + ev.score; badge.className = "tag blue"; }
+
+  /* Update score ring */
+  if (typeof setRing === "function") setRing(ev.score);
+
+  loadProgress();
+}
+
+const evalTyped = document.getElementById("evalTyped");
+if (evalTyped) {
+  evalTyped.onclick = async () => {
+    if (!currentQ) {
+      if (typeof setStatus === "function") setStatus("Select Interview mode and start a session first.");
+      return;
+    }
+    const typed = document.getElementById("typed");
+    const answer = typed ? typed.value.trim() : "";
+    if (!answer) {
+      if (typeof setStatus === "function") setStatus("Type an answer before evaluating.");
+      return;
+    }
+    const res = await apiPost("/evaluate-text", { question_id: currentQ.id, answer });
+    if (res.ok) {
+      showEval(await res.json());
+      if (typeof goStep === "function") goStep(4);
+      if (typeof setStatus === "function") setStatus("Typed answer evaluated.");
+    } else if (res.status !== 401) {
+      if (typeof setStatus === "function") setStatus("Could not evaluate the answer. Is the backend running?");
+    }
+  };
+}
+
+/* ─────────────────────────────────────────────
+   VIDEO RECORDING
+───────────────────────────────────────────── */
+let cam = null, mr = null, vidChunks = [], speechRec = null;
+
+function startCaptions() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  speechRec = new SR();
+  speechRec.continuous     = true;
+  speechRec.interimResults = true;
+  speechRec.lang           = "en-US";
+  speechRec.onresult = e => {
+    let t = "";
+    for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript;
+    const liveEl = document.getElementById("live");
+    if (liveEl) liveEl.textContent = "Live captions: " + t;
+  };
+  try { speechRec.start(); } catch (_) {}
+}
+
+function stopCaptions() {
+  if (speechRec) { try { speechRec.stop(); } catch(_){} speechRec = null; }
+}
+
+const camOn  = document.getElementById("camOn");
+const camOff = document.getElementById("camOff");
+const vidRec = document.getElementById("vidRec");
+
+if (camOn) camOn.onclick = async () => {
   try {
     cam = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    const v = $("cam"); v.srcObject = cam; v.muted = true; v.style.display = "block"; v.play();
-    $("vidRec").disabled = false; $("camOff").disabled = false; setStatus("Camera ready. Press Record video.");
-  } catch (e) { setStatus("Camera unavailable: " + e.message + ". Check browser permission (HTTPS is required online)."); }
-};
-$("camOff").onclick = () => {
-  if (mr && mr.state === "recording") mr.stop();
-  if (cam) cam.getTracks().forEach(t => t.stop());
-  cam = null; $("cam").style.display = "none"; $("vidRec").disabled = true; $("camOff").disabled = true;
-};
-$("vidRec").onclick = () => {
-  if (mr && mr.state === "recording") { mr.stop(); return; }
-  if (!cam) return;
-  chunks = []; $("live").textContent = "";
-  const v = $("cam"); v.controls = false; v.removeAttribute("src"); v.srcObject = cam; v.muted = true; v.play();
-  const type = ["video/webm;codecs=vp8,opus", "video/webm", "video/mp4"].find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
-  mr = new MediaRecorder(cam, type ? { mimeType: type } : {});
-  mr.ondataavailable = e => e.data.size && chunks.push(e.data);
-  mr.onstop = () => {
-    stopLive();
-    blob = new Blob(chunks, { type: mr.mimeType || "video/webm" });   // reuses the existing Analyze button
-    v.srcObject = null; v.muted = false; v.controls = true; v.src = URL.createObjectURL(blob);
-    $("analyze").disabled = false; $("vidRec").textContent = "Record video";
-    $("sessionBadge").textContent = "Answer ready"; setStatus("Video recorded. Analyze it, or record again.");
-  };
-  mr.start(); startLive(); $("vidRec").textContent = "Stop recording"; $("sessionBadge").textContent = "Recording"; setStatus("Recording video answer…");
+    const v = document.getElementById("cam");
+    if (v) { v.srcObject = cam; v.muted = true; v.style.display = "block"; v.play(); }
+    if (vidRec) vidRec.disabled = false;
+    if (camOff) camOff.disabled = false;
+    if (typeof setStatus === "function") setStatus("Camera ready. Press Record video.");
+  } catch(e) {
+    if (typeof setStatus === "function") setStatus("Camera unavailable: " + e.message);
+  }
 };
 
-/* ---------- progress + account actions ---------- */
-const acct = document.createElement("div"); acct.className = "modes"; acct.style.marginTop = "12px";
-acct.innerHTML = '<button class="mode" id="outBtn">Sign out</button><button class="mode" id="delBtn">Delete my account</button>';
-$("topicProgress").appendChild(acct);
-$("outBtn").onclick = signOut;
-$("delBtn").onclick = async () => {
-  if (!confirm("Delete your account and all saved progress? This cannot be undone.")) return;
-  const r = await call("/me", { method: "DELETE" });
-  if (r.ok) { signOut(); }
+if (camOff) camOff.onclick = () => {
+  if (mr && mr.state === "recording") mr.stop();
+  if (cam) cam.getTracks().forEach(t => t.stop());
+  cam = null;
+  const v = document.getElementById("cam");
+  if (v) v.style.display = "none";
+  if (vidRec) vidRec.disabled = true;
+  if (camOff) camOff.disabled = true;
 };
+
+if (vidRec) vidRec.onclick = () => {
+  if (mr && mr.state === "recording") { mr.stop(); return; }
+  if (!cam) return;
+
+  vidChunks = [];
+  const liveEl = document.getElementById("live");
+  if (liveEl) liveEl.textContent = "";
+
+  const v = document.getElementById("cam");
+  if (v) { v.controls = false; v.removeAttribute("src"); v.srcObject = cam; v.muted = true; v.play(); }
+
+  const type = ["video/webm;codecs=vp8,opus","video/webm","video/mp4"]
+    .find(t => window.MediaRecorder && MediaRecorder.isTypeSupported(t));
+
+  mr = new MediaRecorder(cam, type ? { mimeType: type } : {});
+  mr.ondataavailable = e => e.data.size && vidChunks.push(e.data);
+  mr.onstop = () => {
+    stopCaptions();
+    // Assign to the shared `blob` variable used by the Analyze button
+    window.blob = new Blob(vidChunks, { type: mr.mimeType || "video/webm" });
+    blob = window.blob;
+
+    if (v) { v.srcObject = null; v.muted = false; v.controls = true; v.src = URL.createObjectURL(blob); }
+
+    const analyzeBtn = document.getElementById("analyze");
+    if (analyzeBtn) analyzeBtn.disabled = false;
+    if (vidRec) vidRec.textContent = "Record video";
+
+    const badge = document.getElementById("sessionBadge");
+    if (badge) { badge.textContent = "Video ready"; badge.className = "tag green"; }
+    if (typeof setStatus === "function") setStatus("Video recorded. Tap Analyze to continue.");
+  };
+
+  mr.start();
+  startCaptions();
+  vidRec.textContent = "Stop recording";
+
+  const badge = document.getElementById("sessionBadge");
+  if (badge) badge.textContent = "Recording";
+  if (typeof setStatus === "function") setStatus("Recording video answer…");
+};
+
+/* ─────────────────────────────────────────────
+   PROGRESS (server-side)
+───────────────────────────────────────────── */
 async function loadProgress() {
   if (!TOKEN) return;
   try {
-    const r = await call("/progress"); if (!r.ok) return;
-    const d = await r.json(), el = $("topicBars"); el.replaceChildren();
-    if (!d.topics.length) el.textContent = "No evaluated answers yet.";
-    d.topics.forEach(t => {
-      const row = document.createElement("div"); row.className = "metric";
-      const name = document.createElement("span"); name.textContent = t.topic + (t.weak ? " (needs practice)" : "");
-      const bar = document.createElement("span"); bar.className = "bar" + (t.weak ? " y" : " g");
-      const i = document.createElement("i"); i.style.width = t.avg + "%"; bar.appendChild(i);
-      const val = document.createElement("span"); val.className = "val"; val.textContent = t.avg;
-      row.append(document.createElement("span"), name, bar, val); el.appendChild(row);
+    const res = await apiCall("/progress");
+    if (!res.ok) return;
+    const data = await res.json();
+    const el   = document.getElementById("topicBars");
+    if (!el) return;
+
+    el.replaceChildren();
+
+    if (!data.topics || !data.topics.length) {
+      const msg = document.createElement("p");
+      msg.style.cssText = "font-size:13px;color:var(--label-3)";
+      msg.textContent = "No evaluated answers yet. Complete an interview answer to see progress.";
+      el.appendChild(msg);
+      return;
+    }
+
+    data.topics.forEach(t => {
+      const row  = document.createElement("div");
+      row.className = "metric";
+
+      const name = document.createElement("span");
+      name.className   = "metric-name";
+      name.textContent = t.topic + (t.weak ? " · needs practice" : "");
+
+      const val = document.createElement("span");
+      val.className   = "metric-val";
+      val.textContent = t.avg;
+
+      const track = document.createElement("div");
+      track.className = "bar-track";
+      const fill  = document.createElement("div");
+      fill.className  = "bar-fill " + (t.weak ? "a" : "g");
+      fill.style.width = t.avg + "%";
+      track.appendChild(fill);
+
+      row.append(name, val, track);
+      el.appendChild(row);
     });
-  } catch (e) { /* backend offline */ }
+  } catch(_) { /* backend offline */ }
 }
-if (TOKEN) loadProgress(); else showAuth();
+
+/* Account buttons */
+const outBtn = document.getElementById("outBtn");
+const delBtn = document.getElementById("delBtn");
+
+if (outBtn) outBtn.onclick = signOut;
+if (delBtn) delBtn.onclick = async () => {
+  if (!confirm("Delete your account and all saved progress? This cannot be undone.")) return;
+  const res = await apiCall("/me", { method: "DELETE" });
+  if (res.ok) signOut();
+};
