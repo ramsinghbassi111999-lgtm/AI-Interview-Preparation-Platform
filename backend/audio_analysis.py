@@ -1,39 +1,47 @@
+"""
+audio_analysis.py — analyze basic audio properties and estimate pauses.
 
-import soundfile as sf
+Uses librosa.load() exclusively to avoid a soundfile compatibility bug where
+sf.read() raises: open() got an unexpected keyword argument 'metadata_errors'
+on certain soundfile / libsndfile version combinations.
+"""
+import wave
+
 import librosa
 import numpy as np
 
 
 def analyze_audio(file_path: str) -> dict:
-    """Analyze basic audio properties and estimate pauses."""
+    """Return duration, sample-rate, channel count, pause count and silence seconds."""
 
-    audio, sample_rate = sf.read(file_path)
+    # librosa.load is robust across soundfile/libsndfile versions.
+    # sr=None preserves the original sample rate; mono=True returns a 1-D array.
+    audio, sample_rate = librosa.load(file_path, sr=None, mono=True)
+    audio = audio.astype(np.float32)
 
-    # Remember the original number of channels.
-    if audio.ndim == 2:
-        original_channels = audio.shape[1]
-        audio = audio.mean(axis=1)
-    else:
-        original_channels = 1
+    # Best-effort channel count from WAV header; fall back to 1.
+    original_channels = 1
+    try:
+        with wave.open(file_path, "rb") as wf:
+            original_channels = wf.getnchannels()
+    except Exception:
+        pass
 
     duration_seconds = len(audio) / sample_rate
 
-    # Calculate audio energy in short frames.
+    # Energy (RMS) in short frames.
     rms = librosa.feature.rms(
-        y=audio.astype(np.float32),
+        y=audio,
         frame_length=2048,
         hop_length=512,
     )[0]
 
-    # Estimate which frames contain silence.
+    # Silence threshold: 5 % of peak energy, minimum 1e-5.
     threshold = max(float(np.max(rms)) * 0.05, 1e-5)
     silent_frames = rms < threshold
 
-    # Count continuous silent sections of at least 0.3 seconds.
-    min_pause_frames = int(
-        0.3 * sample_rate / 512
-    )
-
+    # Count runs of silence ≥ 0.3 s.
+    min_pause_frames = int(0.3 * sample_rate / 512)
     pause_count = 0
     silent_run = 0
     estimated_silence_seconds = 0.0
@@ -44,24 +52,18 @@ def analyze_audio(file_path: str) -> dict:
         else:
             if silent_run >= min_pause_frames:
                 pause_count += 1
-                estimated_silence_seconds += (
-                    silent_run * 512 / sample_rate
-                )
+                estimated_silence_seconds += silent_run * 512 / sample_rate
             silent_run = 0
 
-    # Include a silent section that continues to the end.
+    # Catch a trailing silent section.
     if silent_run >= min_pause_frames:
         pause_count += 1
-        estimated_silence_seconds += (
-            silent_run * 512 / sample_rate
-        )
+        estimated_silence_seconds += silent_run * 512 / sample_rate
 
     return {
-        "duration_seconds": round(duration_seconds, 2),
-        "sample_rate": sample_rate,
-        "channels": original_channels,
-        "estimated_pause_count": pause_count,
-        "estimated_silence_seconds": round(
-            estimated_silence_seconds, 2
-        ),
+        "duration_seconds":          round(duration_seconds, 2),
+        "sample_rate":               sample_rate,
+        "channels":                  original_channels,
+        "estimated_pause_count":     pause_count,
+        "estimated_silence_seconds": round(estimated_silence_seconds, 2),
     }

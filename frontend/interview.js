@@ -14,10 +14,12 @@ let   TOKEN = localStorage.getItem("ai.token") || "";
    FETCH WRAPPER
    • Attaches Bearer token to every API call
    • Appends question_id to audio-analysis forms
-   • Intercepts 401s to show auth sheet
+   • Clears stale tokens and shows auth on 401
    • Reads evaluation from audio-analysis response
 ───────────────────────────────────────────── */
 const _rawFetch = window.fetch;
+let _authShowing = false;   // prevent multiple simultaneous showAuth calls
+
 window.fetch = async (url, opts = {}) => {
   const str = String(url);
 
@@ -33,9 +35,19 @@ window.fetch = async (url, opts = {}) => {
 
   const res = await _rawFetch(url, opts);
 
-  // Trigger auth sheet on 401 (except from auth endpoints themselves)
-  if (res.status === 401 && !str.includes("/auth/")) {
-    showAuth("Please sign in to continue.");
+  // 401 on a protected endpoint → token is stale (server restarted / DB wiped).
+  // Clear it once and prompt re-login; don't loop.
+  if (res.status === 401 && !str.includes("/auth/") && !_authShowing) {
+    _authShowing = true;
+    TOKEN = "";
+    localStorage.removeItem("ai.token");
+    localStorage.removeItem("ai.user");
+    // Reset nav button
+    const nb = document.getElementById("topAuthBtn");
+    if (nb) { nb.textContent = "Sign in"; nb.onclick = showAuth; }
+    const acct = document.getElementById("acctSection");
+    if (acct) acct.hidden = true;
+    showAuth("Your session expired — please sign in again.");
   }
 
   // Show evaluation result if present in audio-analysis response
@@ -94,13 +106,16 @@ _rawFetch(BASE + "/questions")
 function showAuth(msg) {
   const msgEl = document.getElementById("authMsg");
   if (msgEl && msg) msgEl.textContent = msg;
+  const errEl = document.getElementById("authErr");
+  if (errEl) errEl.textContent = "";   // clear previous errors
   const box = document.getElementById("authBox");
   if (box) box.classList.add("show");
   const au = document.getElementById("au");
-  if (au) au.focus();
+  if (au) setTimeout(() => au.focus(), 50);
 }
 
 function hideAuth() {
+  _authShowing = false;   // allow future 401 handling
   const box = document.getElementById("authBox");
   if (box) box.classList.remove("show");
 }

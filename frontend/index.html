@@ -911,22 +911,22 @@ footer {
 }
 
 /* ─────────────────────────────────────────────
-   AUTH SHEET
+   AUTH MODAL — centered floating card
 ───────────────────────────────────────────── */
 #authBox {
   position: fixed;
   inset: 0;
   display: none;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   z-index: 999;
-  padding: 0 0 0 0;
+  padding: 24px;
 }
 #authBox.show {
   display: flex;
-  animation: sheet-in .3s cubic-bezier(.32,1,.23,1);
+  animation: fade-in .2s ease;
 }
-@keyframes sheet-in {
+@keyframes fade-in {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
@@ -934,30 +934,26 @@ footer {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .auth-sheet {
   position: relative;
   z-index: 1;
   background: #1c1c1e;
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  padding: 8px 32px 48px;
-  width: min(480px, 100%);
-  animation: slide-up .3s cubic-bezier(.32,1,.23,1);
+  border: .5px solid rgba(255,255,255,.12);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px 32px;
+  width: min(420px, 100%);
+  animation: scale-in .22s cubic-bezier(.32,1,.23,1);
+  box-shadow: 0 32px 80px rgba(0,0,0,.7);
 }
-@keyframes slide-up {
-  from { transform: translateY(60px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+@keyframes scale-in {
+  from { transform: scale(.95) translateY(8px); opacity: 0; }
+  to   { transform: scale(1)   translateY(0);   opacity: 1; }
 }
-.auth-handle {
-  width: 36px;
-  height: 4px;
-  background: rgba(255,255,255,.18);
-  border-radius: 2px;
-  margin: 12px auto 28px;
-}
+.auth-handle { display: none; }  /* hide iOS drag handle on centered modal */
 .auth-h { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 6px; }
 .auth-p { font-size: 14px; color: var(--label-2); margin-bottom: 28px; }
 .auth-field-label {
@@ -1390,13 +1386,12 @@ footer {
 
 </div><!-- /app -->
 
-<!-- AUTH SHEET -->
+<!-- AUTH MODAL — centered -->
 <div id="authBox" role="dialog" aria-modal="true" aria-label="Sign in">
   <div class="auth-sheet">
-    <div class="auth-handle"></div>
     <form id="authForm">
-      <h2 class="auth-h">Welcome back</h2>
-      <p class="auth-p" id="authMsg">Sign in to save progress and track your improvement over time.</p>
+      <h2 class="auth-h">Sign in</h2>
+      <p class="auth-p" id="authMsg">Sign in or create a free account to save your progress.</p>
 
       <label class="auth-field-label" for="au">Username</label>
       <input class="auth-input" id="au" type="text" autocomplete="username" required minlength="3" placeholder="your_username">
