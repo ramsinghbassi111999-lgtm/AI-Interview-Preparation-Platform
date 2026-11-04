@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: ai-interview-prep-platform
+    runtime: docker
+    plan: free            # free tier: data resets on redeploy/sleep; see README to keep data
+    healthCheckPath: /health
+    envVars:
+      - key: DB_PATH
+        value: /tmp/interview.db   # on a paid plan use a disk mounted at /data and set /data/interview.db

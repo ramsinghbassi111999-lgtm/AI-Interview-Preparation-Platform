@@ -1,0 +1,31 @@
+
+# Python virtual environments
+venv/
+venv312/
+.venv/
+
+# Python temporary files
+__pycache__/
+*.py[cod]
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+
+# Local models and large data
+models/
+data/
+uploads/
+*.wav
+*.mp3
+*.m4a
+
+# Editor and operating-system files
+.vscode/
+.DS_Store
+Thumbs.db
+venv/
+__pycache__/
+*.db
+.pytest_cache/

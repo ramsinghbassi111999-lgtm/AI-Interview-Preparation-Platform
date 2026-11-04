@@ -1,0 +1,17 @@
+[
+{"id":1,"role":"Software Engineer","topic":"OOP","difficulty":"Easy","question":"Explain the four pillars of object-oriented programming.","keywords":["encapsulation","inheritance","polymorphism","abstraction"]},
+{"id":2,"role":"Software Engineer","topic":"DBMS","difficulty":"Medium","question":"Explain ACID properties in a database transaction.","keywords":["atomicity","consistency","isolation","durability","transaction"]},
+{"id":3,"role":"Software Engineer","topic":"Data Structures","difficulty":"Medium","question":"Compare an array and a linked list.","keywords":["contiguous","pointer","index","insertion","memory","traversal"]},
+{"id":4,"role":"Software Engineer","topic":"Machine Learning","difficulty":"Hard","question":"What is overfitting and how can you prevent it?","keywords":["training","generalize","regularization","validation","dropout","cross-validation"]},
+{"id":5,"role":"Data Analyst","topic":"Statistics","difficulty":"Easy","question":"What is the difference between mean, median and mode, and when would you use each?","keywords":["average","middle","frequent","outlier","skewed"]},
+{"id":6,"role":"Data Analyst","topic":"SQL","difficulty":"Medium","question":"Explain the difference between INNER JOIN and LEFT JOIN.","keywords":["matching","rows","null","table","left"]},
+{"id":7,"role":"Data Analyst","topic":"Data Cleaning","difficulty":"Medium","question":"How do you handle missing values in a dataset?","keywords":["missing","impute","remove","mean","median","analysis"]},
+{"id":8,"role":"Product Manager","topic":"Behavioral","difficulty":"Medium","question":"Tell me about a challenging product decision. How did you evaluate the options?","keywords":["situation","task","action","result","data","stakeholder"]},
+{"id":9,"role":"Product Manager","topic":"Prioritization","difficulty":"Medium","question":"How do you prioritize features when resources are limited?","keywords":["impact","effort","customer","roadmap","metric","trade-off"]},
+{"id":10,"role":"Product Manager","topic":"Metrics","difficulty":"Hard","question":"Which metrics would you track to measure the success of a new feature?","keywords":["adoption","retention","engagement","goal","baseline","experiment"]},
+{"id":11,"role":"UX Designer","topic":"Process","difficulty":"Easy","question":"Walk me through your design process.","keywords":["research","user","wireframe","prototype","testing","iterate"]},
+{"id":12,"role":"UX Designer","topic":"Behavioral","difficulty":"Medium","question":"Describe a time you handled feedback you disagreed with.","keywords":["situation","task","action","result","feedback","listen"]},
+{"id":13,"role":"UX Designer","topic":"Accessibility","difficulty":"Medium","question":"How do you make a design accessible?","keywords":["contrast","keyboard","screen reader","text","wcag","inclusive"]},
+{"id":14,"role":"Marketing Manager","topic":"Strategy","difficulty":"Medium","question":"How would you plan a campaign for a new product launch?","keywords":["audience","channel","budget","message","goal","measure"]},
+{"id":15,"role":"Marketing Manager","topic":"Behavioral","difficulty":"Medium","question":"Tell me about a campaign that did not meet its goals. What did you learn?","keywords":["situation","task","action","result","learn","improve"]}
+]
